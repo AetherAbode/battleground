@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepSeek Code Ground • Apex</title>
+
+  <!-- CodeMirror (editor) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" />
+
+  <!-- xterm.js (terminal) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.js"></script>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* ----- RESET & LAYOUT ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      background: #0b0e14;
+      font-family: 'JetBrains Mono', monospace;
+      overflow: hidden;
+      color: #c8d0dc;
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: #0b0e14;
+    }
+
+    /* ----- TOP BAR ----- */
+    #topbar {
+      flex-shrink: 0;
+      height: 40px;
+      background: rgba(11, 14, 20, 0.95);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+      z-index: 10;
+    }
+    #topbar .brand {
+      font-weight: 700;
+      font-size: 16px;
+      color: #7ae0b0;
+      letter-spacing: 0.5px;
+    }
+    #topbar .brand i {
+      margin-right: 8px;
+    }
+    #topbar .spacer {
+      flex: 1;
+    }
+    #topbar .top-status {
+      font-size: 12px;
+      color: #7a879c;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #topbar .top-status .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #555;
+      transition: background 0.3s;
+    }
+    #topbar .top-status .dot.on {
+      background: #4caf50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+    }
+    #topbar .top-status .badge {
+      background: rgba(255,255,255,0.07);
+      padding: 2px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #bcc8dc;
+    }
+
+    /* ----- MAIN PANEL (split) ----- */
+    #main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ----- LEFT SIDEBAR (file explorer) ----- */
+    #sidebar {
+      width: 220px;
+      min-width: 180px;
+      background: rgba(16, 20, 28, 0.9);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      padding: 12px 8px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    #sidebar .folder-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6a7a90;
+      margin: 8px 0 4px 8px;
+    }
+    #sidebar .file-item {
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #bcc8dc;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #sidebar .file-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+    #sidebar .file-item.active {
+      background: rgba(122, 162, 247, 0.15);
+      color: #7aa2f7;
+    }
+    #sidebar .file-item i {
+      font-size: 14px;
+      width: 18px;
+      text-align: center;
+      opacity: 0.7;
+    }
+    #sidebar .file-item .file-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #sidebar .file-item .file-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    #sidebar .file-item:hover .file-actions {
+      opacity: 1;
+    }
+    #sidebar .file-item .file-actions button {
+      background: none;
+      border: none;
+      color: #6a7a90;
+      cursor: pointer;
+      padding: 0 4px;
+      font-size: 12px;
+      transition: color 0.15s;
+    }
+    #sidebar .file-item .file-actions button:hover {
+      color: #f28b82;
+    }
+
+    /* ----- EDITOR PANEL ----- */
+    #editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0b0e14;
+      min-width: 0;
+    }
+    #editor-toolbar {
+      flex-shrink: 0;
+      height: 36px;
+      background: rgba(16, 20, 28, 0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 12px;
+    }
+    #editor-toolbar .file-label {
+      font-size: 13px;
+      color: #9aaec9;
+    }
+    #editor-toolbar .file-label span {
+      color: #c8d0dc;
+      font-weight: 600;
+    }
+    #editor-toolbar .spacer {
+      flex: 1;
+    }
+    #editor-toolbar button {
+      background: rgba(255,255,255,0.06);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 12px;
+      color: #c8d0dc;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #editor-toolbar button:hover {
+      background: rgba(255,255,255,0.12);
+    }
+    #editor-toolbar button.run-btn {
+      background: rgba(122, 162, 247, 0.2);
+      color: #7aa2f7;
+    }
+    #editor-toolbar button.run-btn:hover {
+      background: rgba(122, 162, 247, 0.3);
+    }
+    #editor-wrapper {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    #editor-wrapper .CodeMirror {
+      height: 100% !important;
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      background: #0b0e14;
+    }
+    .CodeMirror-gutters {
+      background: #0b0e14 !important;
+      border-right: 1px solid rgba(255,255,255,0.05) !important;
+    }
+
+    /* ----- TERMINAL PANEL (bottom) ----- */
+    #terminal-panel {
+      height: 40%;
+      min-height: 200px;
+      max-height: 60%;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      background: #0b0e14;
+      display: flex;
+      flex-direction: column;
+    }
+    #terminal-panel .term-header {
+      flex-shrink: 0;
+      height: 28px;
+      background: rgba(16, 20, 28, 0.9);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 11px;
+      color: #6a7a90;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    #terminal-panel .term-header i {
+      margin-right: 4px;
+    }
+    #terminal-panel .term-header .term-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    #terminal-panel .term-header .term-tabs span {
+      padding: 2px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      font-weight: 600;
+      cursor: default;
+    }
+    #terminal-panel .term-header .term-tabs span.active {
+      background: rgba(122, 162, 247, 0.15);
+      color: #7aa2f7;
+    }
+    #terminal-container {
+      flex: 1;
+      padding: 4px 8px 4px 8px;
+      background: transparent;
+      overflow: hidden;
+    }
+    #terminal-container .xterm {
+      height: 100%;
+    }
+    #terminal-container .xterm-viewport {
+      background: transparent !important;
+    }
+    #terminal-container .xterm-screen {
+      background: transparent !important;
+    }
+    #terminal-container .xterm-cursor {
+      background-color: #7aa2f7 !important;
+      box-shadow: 0 0 12px rgba(122, 162, 247, 0.5);
+    }
+
+    /* ----- SCROLLBARS ----- */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a3547; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3d4b62; }
+
+    /* ----- RESPONSIVE ----- */
+    @media (max-width: 768px) {
+      #sidebar { width: 160px; min-width: 120px; }
+      #terminal-panel { height: 35%; min-height: 120px; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="brand"><i class="fas fa-code"></i>DeepSeek Code</div>
+    <div class="spacer"></div>
+    <div class="top-status">
+      <span><span class="dot" id="top-dot"></span> <span id="top-conn">Offline</span></span>
+      <span class="badge" id="top-model">v4‑pro</span>
+      <span><i class="fas fa-cube"></i> <span id="top-tokens">0</span></span>
+      <span><i class="fas fa-dollar-sign"></i> <span id="top-cost">0.0000</span></span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <!-- SIDEBAR -->
+    <div id="sidebar">
+      <div class="folder-title"><i class="fas fa-folder"></i> Files</div>
+      <div id="file-list"></div>
+      <div style="margin-top:12px; padding:0 8px;">
+        <button id="new-file-btn" style="background:rgba(255,255,255,0.06); border:none; border-radius:6px; padding:6px 12px; color:#bcc8dc; font-family:inherit; font-size:12px; cursor:pointer; width:100%;">
+          <i class="fas fa-plus"></i> New file
+        </button>
+      </div>
+    </div>
+
+    <!-- EDITOR PANEL -->
+    <div id="editor-panel">
+      <div id="editor-toolbar">
+        <div class="file-label">File: <span id="current-file-label">(none)</span></div>
+        <div class="spacer"></div>
+        <button id="save-editor-btn"><i class="fas fa-save"></i> Save</button>
+        <button id="run-editor-btn" class="run-btn"><i class="fas fa-play"></i> Run</button>
+      </div>
+      <div id="editor-wrapper"><textarea id="editor-textarea"></textarea></div>
+    </div>
+  </div>
+
+  <!-- TERMINAL PANEL -->
+  <div id="terminal-panel">
+    <div class="term-header">
+      <div><i class="fas fa-terminal"></i> Terminal / AI</div>
+      <div class="term-tabs">
+        <span class="active">Chat</span>
+        <span>Output</span>
+      </div>
+    </div>
+    <div id="terminal-container"></div>
+  </div>
+</div>
+
+<!-- ================================================================
+     APPLICATION SCRIPT
+     ================================================================ -->
+<script>
+  (function() {
+    'use strict';
+
+    // ─── CONFIG ─────────────────────────────────────────────────────
+    const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+    const STORAGE_KEY_API = 'deepseek_api_key';
+    const STORAGE_KEY_CONV = 'deepseek_conversation';
+    const STORAGE_KEY_FILES = 'deepseek_files';
+    const STORAGE_KEY_SETTINGS = 'deepseek_settings';
+
+    const DEFAULT_SYSTEM =
+      `You are an elite software engineer and coding assistant. Help the user write, debug, refactor, and understand code. Provide clear explanations with full code blocks. Always consider performance, security, and best practices.`;
+
+    // ─── STATE ──────────────────────────────────────────────────────
+    let apiKey = localStorage.getItem(STORAGE_KEY_API) || '';
+    let model = 'pro';                      // 'pro' | 'flash'
+    let conversation = [];
+    let filesystem = {};
+    let settings = { systemPrompt: DEFAULT_SYSTEM, showReasoning: true };
+    let currentFile = null;                 // name of open file
+    let editor = null;                     // CodeMirror instance
+    let terminal = null;
+    let fitAddon = null;
+
+    let commandHistory = [];
+    let historyIndex = 0;
+    let inputBuffer = '';
+    let isProcessing = false;
+    let lastAssistantResponse = '';
+    let totalTokens = 0;
+    let totalCost = 0;
+
+    // DOM refs
+    const fileListEl = document.getElementById('file-list');
+    const currentFileLabel = document.getElementById('current-file-label');
+    const editorTextarea = document.getElementById('editor-textarea');
+    const editorWrapper = document.getElementById('editor-wrapper');
+    const saveBtn = document.getElementById('save-editor-btn');
+    const runBtn = document.getElementById('run-editor-btn');
+    const newFileBtn = document.getElementById('new-file-btn');
+    const topDot = document.getElementById('top-dot');
+    const topConn = document.getElementById('top-conn');
+    const topModel = document.getElementById('top-model');
+    const topTokens = document.getElementById('top-tokens');
+    const topCost = document.getElementById('top-cost');
+    const terminalContainer = document.getElementById('terminal-container');
+
+    // ─── PERSISTENCE ──────────────────────────────────────────────
+    function loadState() {
+      try {
+        const conv = localStorage.getItem(STORAGE_KEY_CONV);
+        if (conv) conversation = JSON.parse(conv);
+        const files = localStorage.getItem(STORAGE_KEY_FILES);
+        if (files) filesystem = JSON.parse(files);
+        const sett = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (sett) settings = { ...settings, ...JSON.parse(sett) };
+      } catch (_) {}
+    }
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_CONV, JSON.stringify(conversation));
+        localStorage.setItem(STORAGE_KEY_FILES, JSON.stringify(filesystem));
+        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+      } catch (_) {}
+    }
+
+    // ─── EDITOR INIT ──────────────────────────────────────────────
+    function initEditor() {
+      editor = CodeMirror.fromTextArea(editorTextarea, {
+        mode: 'javascript',
+        theme: 'dracula',
+        lineNumbers: true,
+        matchBrackets: true,
+        styleActiveLine: true,
+        foldGutter: true,
+        gutters: ['CodeMirror-foldgutter', 'CodeMirror-linenumbers'],
+        extraKeys: {
+          'Ctrl-S': function() { saveCurrentFile(); },
+          'Cmd-S': function() { saveCurrentFile(); },
+        }
+      });
+      editor.on('change', function() {
+        // auto-save after 1s idle
+        if (currentFile && filesystem[currentFile] !== undefined) {
+          clearTimeout(window._autoSaveTimer);
+          window._autoSaveTimer = setTimeout(() => {
+            saveCurrentFile();
+          }, 800);
+        }
+      });
+      // set initial empty file
+      openFile(null);
+      renderFileList();
+    }
+
+    function openFile(filename) {
+      if (filename && filesystem[filename] === undefined) {
+        // create new
+        filesystem[filename] = '';
+        saveState();
+      }
+      currentFile = filename;
+      if (filename) {
+        const content = filesystem[filename] || '';
+        editor.setValue(content);
+        currentFileLabel.textContent = filename;
+        // set mode based on extension
+        let mode = 'javascript';
+        if (filename.endsWith('.py')) mode = 'python';
+        else if (filename.endsWith('.html')) mode = 'htmlmixed';
+        else if (filename.endsWith('.css')) mode = 'css';
+        else if (filename.endsWith('.md')) mode = 'markdown';
+        else if (filename.endsWith('.json')) mode = 'javascript';
+        editor.setOption('mode', mode);
+      } else {
+        editor.setValue('');
+        currentFileLabel.textContent = '(none)';
+      }
+      renderFileList();
+      // highlight active file
+      document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+      if (filename) {
+        const target = document.querySelector(`.file-item[data-file="${filename}"]`);
+        if (target) target.classList.add('active');
+      }
+    }
+
+    function saveCurrentFile() {
+      if (!currentFile) return;
+      const content = editor.getValue();
+      filesystem[currentFile] = content;
+      saveState();
+      // visual feedback
+      saveBtn.style.color = '#7ae0b0';
+      setTimeout(() => saveBtn.style.color = '', 300);
+    }
+
+    function renderFileList() {
+      const names = Object.keys(filesystem).sort();
+      let html = '';
+      names.forEach(name => {
+        const icon = name.endsWith('.js') ? 'fa-brands fa-js' :
+                     name.endsWith('.py') ? 'fa-brands fa-python' :
+                     name.endsWith('.html') ? 'fa-brands fa-html5' :
+                     name.endsWith('.css') ? 'fa-brands fa-css3-alt' :
+                     name.endsWith('.json') ? 'fa-regular fa-file-code' :
+                     'fa-regular fa-file';
+        html += `
+          <div class="file-item ${name === currentFile ? 'active' : ''}" data-file="${name}">
+            <i class="${icon}"></i>
+            <span class="file-name">${name}</span>
+            <span class="file-actions">
+              <button class="del-file" data-file="${name}" title="Delete"><i class="fas fa-times"></i></button>
+            </span>
+          </div>
+        `;
+      });
+      fileListEl.innerHTML = html;
+
+      // Click handlers
+      fileListEl.querySelectorAll('.file-item').forEach(el => {
+        el.addEventListener('click', function(e) {
+          if (e.target.closest('.del-file')) return;
+          const fname = this.dataset.file;
+          if (fname) openFile(fname);
+        });
+        const delBtn = el.querySelector('.del-file');
+        if (delBtn) {
+          delBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const fname = this.dataset.file;
+            if (fname && confirm(`Delete "${fname}"?`)) {
+              delete filesystem[fname];
+              if (currentFile === fname) openFile(null);
+              saveState();
+              renderFileList();
+            }
+          });
+        }
+      });
+    }
+
+    // ─── RUN CODE ──────────────────────────────────────────────────
+    function runCurrentFile() {
+      if (!currentFile) {
+        terminal.writeln('\x1b[33mNo file open to run.\x1b[0m');
+        return;
+      }
+      const content = editor.getValue();
+      const ext = currentFile.split('.').pop().toLowerCase();
+      if (ext === 'js') {
+        // Run in sandbox iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        const win = iframe.contentWindow;
+        const oldLog = win.console.log;
+        let output = '';
+        win.console.log = function(...args) {
+          output += args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ') + '\n';
+        };
+        win.console.error = function(...args) {
+          output += '\x1b[31m' + args.map(a => String(a)).join(' ') + '\x1b[0m\n';
+        };
+        try {
+          const result = win.eval(content);
+          if (result !== undefined) {
+            output += '→ ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result)) + '\n';
+          }
+        } catch (e) {
+          output += '\x1b[31m' + e.message + '\x1b[0m\n';
+        }
+        win.console.log = oldLog;
+        document.body.removeChild(iframe);
+        terminal.writeln(`\x1b[36m--- Running ${currentFile} ---\x1b[0m`);
+        terminal.writeln(output.trim() || '\x1b[33m(no output)\x1b[0m');
+        terminal.writeln('\x1b[36m--- done ---\x1b[0m');
+        writePrompt();
+      } else if (ext === 'py') {
+        terminal.writeln('\x1b[33mPython execution not supported in browser (use Pyodide for that).\x1b[0m');
+        writePrompt();
+      } else {
+        terminal.writeln(`\x1b[33mCannot run .${ext} files.\x1b[0m`);
+        writePrompt();
+      }
+    }
+
+    // ─── TERMINAL SETUP ───────────────────────────────────────────
+    function initTerminal() {
+      terminal = new Terminal({
+        cursorBlink: true,
+        fontSize: 13,
+        fontFamily: '"JetBrains Mono", monospace',
+        theme: {
+          background: '#0b0e14',
+          foreground: '#c8d0dc',
+          cursor: '#7aa2f7',
+          cursorAccent: '#0b0e14',
+          selection: 'rgba(122,162,247,0.25)',
+          black: '#181e28',
+          red: '#f28b82',
+          green: '#7ae0b0',
+          yellow: '#f7dc6f',
+          blue: '#7aa2f7',
+          magenta: '#bb6bd9',
+          cyan: '#5bc0de',
+          white: '#e8edf5',
+          brightBlack: '#6a7a90',
+          brightRed: '#ff6b6b',
+          brightGreen: '#8ce0a0',
+          brightYellow: '#f7dc6f',
+          brightBlue: '#7aa2f7',
+          brightMagenta: '#d4a0e8',
+          brightCyan: '#8ad8e8',
+          brightWhite: '#f0f4fc'
+        },
+        convertEol: true,
+        scrollback: 2000,
+        tabStopWidth: 4,
+      });
+      fitAddon = new FitAddon.FitAddon();
+      const webLinksAddon = new WebLinksAddon.WebLinksAddon();
+      terminal.loadAddon(fitAddon);
+      terminal.loadAddon(webLinksAddon);
+      terminal.open(terminalContainer);
+      fitAddon.fit();
+
+      window.addEventListener('resize', () => fitAddon.fit());
+
+      // Input handling
+      terminal.onKey((e) => {
+        if (isProcessing) return;
+        const ev = e.domEvent;
+        const key = e.key;
+
+        if (ev.key === 'Enter') {
+          const line = inputBuffer.trim();
+          inputBuffer = '';
+          if (line) {
+            commandHistory.push(line);
+            historyIndex = commandHistory.length;
+            terminal.writeln('');
+            handleCommand(line);
+          } else {
+            terminal.writeln('');
+            writePrompt();
+          }
+          ev.preventDefault();
+        } else if (ev.key === 'Backspace') {
+          if (inputBuffer.length > 0) {
+            inputBuffer = inputBuffer.slice(0, -1);
+            terminal.write('\x1b[1D\x1b[K');
+          }
+          ev.preventDefault();
+        } else if (ev.key === 'ArrowUp') {
+          if (historyIndex > 0) {
+            historyIndex--;
+            const hist = commandHistory[historyIndex] || '';
+            terminal.write('\r\x1b[K');
+            writePrompt();
+            terminal.write(hist);
+            inputBuffer = hist;
+          }
+          ev.preventDefault();
+        } else if (ev.key === 'ArrowDown') {
+          if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            const hist = commandHistory[historyIndex] || '';
+            terminal.write('\r\x1b[K');
+            writePrompt();
+            terminal.write(hist);
+            inputBuffer = hist;
+          } else {
+            historyIndex = commandHistory.length;
+            terminal.write('\r\x1b[K');
+            writePrompt();
+            inputBuffer = '';
+          }
+          ev.preventDefault();
+        } else if (key.length === 1 && key.charCodeAt(0) >= 32) {
+          inputBuffer += key;
+          terminal.write(key);
+        }
+      });
+
+      writePrompt();
+      updateConnectionStatus(!!apiKey);
+      updateModelBadge();
+      updateStats();
+
+      // Welcome
+      if (apiKey) {
+        terminal.writeln('\x1b[32mConnected to DeepSeek. Type /help for commands.\x1b[0m');
+        writePrompt();
+      }
+    }
+
+    function writePrompt() {
+      terminal.write('\r\n\x1b[36mCode > \x1b[0m');
+    }
+
+    function updateConnectionStatus(connected) {
+      if (connected) {
+        topDot.className = 'dot on';
+        topConn.textContent = 'Online';
+      } else {
+        topDot.className = 'dot';
+        topConn.textContent = 'Offline';
+      }
+    }
+
+    function updateModelBadge() {
+      topModel.textContent = `v4‑${model}`;
+    }
+
+    function updateStats() {
+      topTokens.textContent = totalTokens;
+      topCost.textContent = totalCost.toFixed(6);
+    }
+
+    // ─── COMMAND HANDLER ──────────────────────────────────────────
+    function handleCommand(input) {
+      if (input.startsWith('/')) {
+        const parts = input.slice(1).split(/\s+/);
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1);
+        executeSlashCommand(cmd, args);
+      } else {
+        sendToAI(input);
+      }
+    }
+
+    function executeSlashCommand(cmd, args) {
+      switch (cmd) {
+        case 'help': showHelp(); break;
+        case 'clear': terminal.clear(); writePrompt(); break;
+        case 'model':
+          if (args.length === 0) {
+            terminal.writeln(`\x1b[36mModel: \x1b[32m${model}\x1b[0m`);
+          } else {
+            const choice = args[0].toLowerCase();
+            if (choice === 'pro' || choice === 'flash') {
+              model = choice;
+              updateModelBadge();
+              terminal.writeln(`\x1b[32mSwitched to ${model}\x1b[0m`);
+            } else {
+              terminal.writeln('\x1b[31mUse pro or flash.\x1b[0m');
+            }
+          }
+          writePrompt(); break;
+
+        case 'key':
+          if (args.length > 0) {
+            const key = args[0];
+            if (key.startsWith('sk-') && key.length > 20) {
+              apiKey = key;
+              localStorage.setItem(STORAGE_KEY_API, apiKey);
+              terminal.writeln('\x1b[32mAPI key updated.\x1b[0m');
+              updateConnectionStatus(true);
+            } else {
+              terminal.writeln('\x1b[31mInvalid key.\x1b[0m');
+            }
+          } else {
+            showKeyModal();
+          }
+          writePrompt(); break;
+
+        case 'system':
+          if (args.length === 0) {
+            terminal.writeln(`\x1b[36mSystem prompt:\x1b[0m\n${settings.systemPrompt}`);
+          } else {
+            settings.systemPrompt = args.join(' ');
+            saveState();
+            terminal.writeln('\x1b[32mSystem prompt updated.\x1b[0m');
+          }
+          writePrompt(); break;
+
+        case 'think':
+          settings.showReasoning = !settings.showReasoning;
+          saveState();
+          terminal.writeln(`\x1b[36mReasoning: \x1b[32m${settings.showReasoning ? 'ON' : 'OFF'}\x1b[0m`);
+          writePrompt(); break;
+
+        case 'history':
+          if (conversation.length === 0) {
+            terminal.writeln('\x1b[33mNo conversation.\x1b[0m');
+          } else {
+            terminal.writeln(`\x1b[36m${conversation.length} messages:\x1b[0m`);
+            conversation.forEach((m, i) => {
+              const role = m.role === 'user' ? '\x1b[33mUser\x1b[0m' : '\x1b[32mAssistant\x1b[0m';
+              const preview = m.content.slice(0, 60) + (m.content.length > 60 ? '…' : '');
+              terminal.writeln(`  ${i+1}. ${role}: ${preview}`);
+            });
+          }
+          writePrompt(); break;
+
+        case 'undo':
+          if (conversation.length >= 2) {
+            conversation.splice(-2);
+            saveState();
+            terminal.writeln('\x1b[33mUndone last exchange.\x1b[0m');
+          } else {
+            terminal.writeln('\x1b[33mNothing to undo.\x1b[0m');
+          }
+          writePrompt(); break;
+
+        case 'reset':
+          if (args.includes('--force') || confirm('Reset all?')) {
+            conversation = [];
+            filesystem = {};
+            totalTokens = 0;
+            totalCost = 0;
+            saveState();
+            terminal.clear();
+            terminal.writeln('\x1b[32mReset complete.\x1b[0m');
+            openFile(null);
+            renderFileList();
+            writePrompt();
+          } else {
+            writePrompt();
+          }
+          break;
+
+        case 'edit':
+          if (args.length === 0) {
+            terminal.writeln('\x1b[31mUsage: /edit <filename>\x1b[0m');
+          } else {
+            const fname = args[0];
+            if (filesystem[fname] !== undefined || args.length > 1) {
+              // if content provided, create/update
+              if (args.length > 1) {
+                const content = args.slice(1).join(' ');
+                filesystem[fname] = content;
+                saveState();
+                terminal.writeln(`\x1b[32mUpdated ${fname}\x1b[0m`);
+              }
+              openFile(fname);
+            } else {
+              filesystem[fname] = '';
+              saveState();
+              openFile(fname);
+            }
+          }
+          writePrompt(); break;
+
+        case 'ls':
+          const names = Object.keys(filesystem).sort();
+          if (names.length === 0) terminal.writeln('\x1b[33m(empty)\x1b[0m');
+          else names.forEach(n => terminal.writeln(`  \x1b[36m${n}\x1b[0m`));
+          writePrompt(); break;
+
+        case 'cat':
+          if (args.length === 0) terminal.writeln('\x1b[31mUsage: /cat <file>\x1b[0m');
+          else {
+            const f = args[0];
+            if (filesystem[f] !== undefined) {
+              terminal.writeln(`\x1b[36m--- ${f} ---\x1b[0m`);
+              terminal.writeln(filesystem[f]);
+            } else {
+              terminal.writeln(`\x1b[31mFile not found: ${f}\x1b[0m`);
+            }
+          }
+          writePrompt(); break;
+
+        case 'rm':
+          if (args.length === 0) terminal.writeln('\x1b[31mUsage: /rm <file>\x1b[0m');
+          else {
+            const f = args[0];
+            if (filesystem[f] !== undefined) {
+              delete filesystem[f];
+              if (currentFile === f) openFile(null);
+              saveState();
+              renderFileList();
+              terminal.writeln(`\x1b[32mRemoved ${f}\x1b[0m`);
+            } else {
+              terminal.writeln(`\x1b[31mFile not found: ${f}\x1b[0m`);
+            }
+          }
+          writePrompt(); break;
+
+        case 'run':
+          if (args.length === 0) {
+            runCurrentFile();
+          } else {
+            const f = args[0];
+            if (filesystem[f] !== undefined) {
+              const oldFile = currentFile;
+              openFile(f);
+              runCurrentFile();
+              if (oldFile) openFile(oldFile);
+            } else {
+              terminal.writeln(`\x1b[31mFile not found: ${f}\x1b[0m`);
+              writePrompt();
+            }
+          }
+          break;
+
+        case 'stats':
+          terminal.writeln(`\x1b[36mStats:\x1b[0m`);
+          terminal.writeln(`  Tokens: ${totalTokens}`);
+          terminal.writeln(`  Cost:   $${totalCost.toFixed(6)}`);
+          terminal.writeln(`  Files:  ${Object.keys(filesystem).length}`);
+          terminal.writeln(`  Msgs:   ${conversation.length}`);
+          writePrompt(); break;
+
+        case 'exit':
+          terminal.writeln('Goodbye!');
+          setTimeout(() => window.close(), 500);
+          break;
+
+        default:
+          terminal.writeln(`\x1b[31mUnknown command: /${cmd}\x1b[0m`);
+          writePrompt();
+      }
+    }
+
+    function showHelp() {
+      terminal.writeln('\x1b[36m╔═══════════════════════════════════════════════════════╗');
+      terminal.writeln('║           DeepSeek Code Ground – Help                    ║');
+      terminal.writeln('╚═══════════════════════════════════════════════════════╝\x1b[0m');
+      terminal.writeln('\x1b[33mAI & Conversation:\x1b[0m');
+      terminal.writeln('  /model [pro|flash]   Switch model');
+      terminal.writeln('  /key [key]           Set API key');
+      terminal.writeln('  /system [prompt]     Set system prompt');
+      terminal.writeln('  /think               Toggle reasoning');
+      terminal.writeln('  /history             Show conversation');
+      terminal.writeln('  /undo                Undo last exchange');
+      terminal.writeln('  /reset [--force]     Reset everything');
+      terminal.writeln('\x1b[33mFiles & Editor:\x1b[0m');
+      terminal.writeln('  /edit <file> [text]  Open/create file');
+      terminal.writeln('  /ls                  List files');
+      terminal.writeln('  /cat <file>          Show file content');
+      terminal.writeln('  /rm <file>           Delete file');
+      terminal.writeln('  /run [file]          Run JS file');
+      terminal.writeln('\x1b[33mOther:\x1b[0m');
+      terminal.writeln('  /stats               Usage stats');
+      terminal.writeln('  /clear               Clear terminal');
+      terminal.writeln('  /exit                Quit');
+      terminal.writeln('\x1b[33mJust type anything to chat with DeepSeek.\x1b[0m');
+      writePrompt();
+    }
+
+    // ─── AI COMMUNICATION ─────────────────────────────────────────
+    async function sendToAI(userInput) {
+      if (!apiKey) {
+        terminal.writeln('\x1b[31mNo API key. Use /key.\x1b[0m');
+        writePrompt();
+        return;
+      }
+      conversation.push({ role: 'user', content: userInput });
+      const messages = [
+        { role: 'system', content: settings.systemPrompt },
+        ...conversation
+      ];
+      isProcessing = true;
+      updateConnectionStatus(true);
+
+      try {
+        const modelName = model === 'pro' ? 'deepseek-v4-pro' : 'deepseek-v4-flash';
+        const payload = {
+          model: modelName,
+          messages: messages,
+          stream: true,
+          max_tokens: 4096,
+          temperature: 0.7,
+        };
+        if (model === 'pro') payload.reasoning_effort = 'medium';
+
+        const resp = await fetch(DEEPSEEK_API_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+          let err = `HTTP ${resp.status}`;
+          try { const d = await resp.json(); if (d.error?.message) err = d.error.message; } catch(_) {}
+          throw new Error(err);
+        }
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let full = '';
+        let reasoning = '';
+
+        terminal.writeln('');
+        terminal.write('\x1b[32mAssistant > \x1b[0m');
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n').filter(l => l.trim() !== '');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') continue;
+              try {
+                const parsed = JSON.parse(data);
+                const delta = parsed.choices[0].delta;
+                if (delta.reasoning_content && settings.showReasoning) {
+                  reasoning += delta.reasoning_content;
+                  terminal.write(`\x1b[2m${delta.reasoning_content}\x1b[0m`);
+                }
+                if (delta.content) {
+                  full += delta.content;
+                  terminal.write(delta.content);
+                }
+              } catch (_) {}
+            }
+          }
+        }
+
+        if (full) {
+          conversation.push({ role: 'assistant', content: full });
+          lastAssistantResponse = full;
+          const approxTokens = Math.ceil((full + userInput + settings.systemPrompt).length / 4);
+          totalTokens += approxTokens;
+          const rate = model === 'pro' ? 2.5 : 0.3;
+          totalCost += approxTokens * rate / 1_000_000;
+          updateStats();
+          saveState();
+        } else {
+          terminal.writeln('\x1b[33mNo response.\x1b[0m');
+        }
+        terminal.writeln('');
+        writePrompt();
+      } catch (err) {
+        terminal.writeln(`\x1b[31mError: ${err.message}\x1b[0m`);
+        if (conversation.length > 0 && conversation[conversation.length-1].role === 'user') {
+          conversation.pop();
+        }
+        updateConnectionStatus(false);
+        writePrompt();
+      }
+      isProcessing = false;
+    }
+
+    // ─── KEY MODAL ─────────────────────────────────────────────────
+    function showKeyModal() {
+      const modal = document.createElement('div');
+      modal.id = 'key-modal';
+      modal.style.cssText = `
+        position:fixed; top:0; left:0; width:100%; height:100%;
+        background:rgba(0,0,0,0.75); backdrop-filter:blur(12px);
+        display:flex; align-items:center; justify-content:center; z-index:9999;
+      `;
+      modal.innerHTML = `
+        <div style="background:#181e28; border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:40px; max-width:480px; width:90%;">
+          <h2 style="color:#fff; font-weight:700; font-size:24px; margin-bottom:8px; display:flex; align-items:center; gap:12px;">
+            <i class="fas fa-key" style="color:#7ae0b0;"></i> API Key
+          </h2>
+          <p style="color:#9aaec9; font-size:14px; line-height:1.6; margin-bottom:24px;">
+            Enter your DeepSeek API key. It stays in your browser.
+          </p>
+          <div style="display:flex; gap:12px;">
+            <input type="password" id="modal-key-input" placeholder="sk-..." style="flex:1; background:#0a0c10; border:1px solid #2a3547; border-radius:12px; padding:14px 18px; font-family:inherit; font-size:14px; color:#e8edf5; outline:none;" />
+            <button id="modal-save-btn" style="background:#7ae0b0; border:none; border-radius:12px; padding:14px 28px; font-weight:700; color:#0a0c10; font-family:inherit; font-size:14px; cursor:pointer;">Connect</button>
+          </div>
+          <div style="margin-top:12px; font-size:12px; color:#6a7a90;">
+            <i class="fas fa-info-circle"></i> Get one at <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:#7ae0b0; text-decoration:none;">platform.deepseek.com</a>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      const input = modal.querySelector('#modal-key-input');
+      const saveBtn = modal.querySelector('#modal-save-btn');
+      const closeModal = () => {
+        modal.remove();
+        if (apiKey) {
+          updateConnectionStatus(true);
+          terminal.writeln('\x1b[32mAPI key set. Welcome!\x1b[0m');
+          terminal.writeln('Type /help for commands.');
+          writePrompt();
+        } else {
+          // still no key, keep modal?
+        }
+      };
+      saveBtn.addEventListener('click', () => {
+        const key = input.value.trim();
+        if (key && key.startsWith('sk-') && key.length > 20) {
+          apiKey = key;
+          localStorage.setItem(STORAGE_KEY_API, apiKey);
+          closeModal();
+        } else {
+          alert('Invalid key. Must start with sk-');
+        }
+      });
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveBtn.click(); });
+      input.focus();
+
+      // click outside to close? only if key already exists
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal && apiKey) closeModal();
+      });
+    }
+
+    // ─── INIT ─────────────────────────────────────────────────────
+    function init() {
+      loadState();
+      initEditor();
+      initTerminal();
+
+      if (!apiKey) {
+        showKeyModal();
+      } else {
+        updateConnectionStatus(true);
+        terminal.writeln('\x1b[32mConnected to DeepSeek. Type /help for commands.\x1b[0m');
+        writePrompt();
+      }
+
+      // Editor buttons
+      saveBtn.addEventListener('click', saveCurrentFile);
+      runBtn.addEventListener('click', runCurrentFile);
+      newFileBtn.addEventListener('click', () => {
+        const name = prompt('New file name:');
+        if (name && name.trim()) {
+          const fname = name.trim();
+          if (filesystem[fname] !== undefined) {
+            alert('File already exists.');
+          } else {
+            filesystem[fname] = '';
+            saveState();
+            openFile(fname);
+            renderFileList();
+          }
+        }
+      });
+
+      // If there is a default file, open it
+      const firstFile = Object.keys(filesystem)[0];
+      if (firstFile) openFile(firstFile);
+
+      // Window resize for terminal
+      window.addEventListener('resize', () => fitAddon?.fit());
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+</script>
+</body>
+</html>
