@@ -343,7 +343,8 @@
   (function() {
     'use strict';
 
-    const PROXY_URL = 'http://localhost:3000/api/chat';  // update to your proxy URL
+    // ─── RAILWAY BACKEND URL ──────────────────────────────────────────
+    const PROXY_URL = 'https://battleground-deepseektoken.up.railway.app/api/chat';
 
     // ---- DOM refs ----
     const fileListEl = document.getElementById('file-list');
@@ -423,9 +424,7 @@
 
     function togglePanel(panel) {
       if (layoutState.maximized) {
-        // If maximized, exit maximize first
         layoutState.maximized = false;
-        // Then toggle the specific panel
       }
       if (panel === 'sidebar') {
         layoutState.sidebarHidden = !layoutState.sidebarHidden;
@@ -434,7 +433,6 @@
       } else if (panel === 'chat') {
         layoutState.chatHidden = !layoutState.chatHidden;
       }
-      // Ensure maximize is off when toggling individual panels
       layoutState.maximized = false;
       saveLayout();
       applyLayout();
@@ -442,17 +440,8 @@
 
     function toggleMaximize() {
       layoutState.maximized = !layoutState.maximized;
-      if (layoutState.maximized) {
-        // Save current states (they will be restored when un-maximized)
-        // We'll just use the current layoutState and override with hidden
-        // But we don't want to lose the individual toggles, so we keep them but apply hidden.
-        // When maximized, all panels are hidden regardless of individual flags.
-        // When un-maximized, we restore individual flags.
-        // So we don't change the flags, just apply layout.
-      }
       saveLayout();
       applyLayout();
-      // Update button icon
       if (layoutState.maximized) {
         toggleMaximizeBtn.innerHTML = '<i class="fas fa-compress"></i>';
         toggleMaximizeBtn.classList.add('active');
