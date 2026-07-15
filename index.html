@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PySandbox Pro + DeepSeek AI</title>
+  <title>Full Coding Sandbox + DeepSeek AI</title>
 
   <!-- CodeMirror -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
@@ -12,14 +12,27 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/indent-fold.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/python-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/javascript-hint.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+
+  <!-- xterm.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.js"></script>
+
+  <!-- Pyodide -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,6 +41,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
+    /* ----- RESET & LAYOUT ----- */
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { height:100%; background:#0e1219; font-family:'Inter',sans-serif; color:#e0e8f0; overflow:hidden; }
     #app {
@@ -38,30 +52,27 @@
                  radial-gradient(ellipse at 80% 70%, rgba(120,40,100,0.08) 0%, transparent 70%),
                  #0e1219;
     }
+
+    /* ----- TOP BAR ----- */
     #topbar {
       flex-shrink:0;
-      height:52px;
+      height:48px;
       background:rgba(14,18,25,0.85);
       backdrop-filter:blur(16px);
       border-bottom:1px solid rgba(255,255,255,0.06);
       display:flex;
       align-items:center;
-      padding:0 24px;
+      padding:0 20px;
       gap:16px;
       z-index:10;
     }
     #topbar .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:18px; color:#7ae0b0; }
     #topbar .brand i { font-size:20px; }
-    #topbar .file-path { font-size:13px; color:#8899b0; background:rgba(255,255,255,0.05); padding:4px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.04); }
     #topbar .spacer { flex:1; }
     #topbar .status { display:flex; align-items:center; gap:16px; font-size:13px; color:#8899b0; }
     #topbar .status .dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#4caf50; box-shadow:0 0 12px rgba(76,175,80,0.4); transition:background 0.3s; }
     #topbar .status .dot.off { background:#555; box-shadow:none; }
-    #topbar .toggle-group {
-      display:flex;
-      gap:8px;
-      margin-right:8px;
-    }
+    #topbar .toggle-group { display:flex; gap:8px; margin-right:8px; }
     #topbar .toggle-btn {
       background:rgba(255,255,255,0.06);
       border:none;
@@ -75,19 +86,21 @@
     #topbar .toggle-btn:hover { background:rgba(255,255,255,0.12); color:#c8d0dc; }
     #topbar .toggle-btn.active { color:#7ae0b0; background:rgba(122,224,176,0.15); }
 
+    /* ----- MAIN SPLIT ----- */
     #main {
       display:flex;
       flex:1;
       overflow:hidden;
-      transition: all 0.2s ease;
     }
+
+    /* ----- SIDEBAR (file tree) ----- */
     #sidebar {
-      width:220px;
+      width:240px;
       min-width:180px;
       background:rgba(14,18,25,0.7);
       backdrop-filter:blur(4px);
       border-right:1px solid rgba(255,255,255,0.05);
-      padding:16px 10px;
+      padding:12px 8px;
       overflow-y:auto;
       flex-shrink:0;
       transition: all 0.25s ease;
@@ -99,39 +112,81 @@
       border:none;
       overflow:hidden;
     }
-    #sidebar .section-title { font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:#6a7a90; margin:0 0 12px 8px; display:flex; align-items:center; gap:8px; }
-    #sidebar .file-item { display:flex; align-items:center; gap:10px; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px; color:#bcc8dc; transition:all 0.15s; margin-bottom:2px; }
-    #sidebar .file-item:hover { background:rgba(255,255,255,0.06); }
-    #sidebar .file-item.active { background:rgba(122,162,247,0.12); color:#7aa2f7; }
-    #sidebar .file-item i { width:20px; font-size:14px; opacity:0.7; }
-    #sidebar .file-item .fname { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    #sidebar .file-item .del-btn { background:none; border:none; color:#6a7a90; cursor:pointer; opacity:0; transition:opacity 0.15s; padding:0 4px; }
-    #sidebar .file-item:hover .del-btn { opacity:1; }
-    #sidebar .file-item .del-btn:hover { color:#f28b82; }
-    #sidebar .add-btn { background:rgba(255,255,255,0.06); border:none; border-radius:6px; padding:8px 12px; color:#bcc8dc; font-family:inherit; font-size:12px; cursor:pointer; width:100%; margin-top:12px; transition:background 0.15s; display:flex; align-items:center; gap:8px; justify-content:center; }
+    #sidebar .section-title { font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:#6a7a90; margin:0 0 8px 8px; display:flex; align-items:center; gap:8px; }
+    .tree-item {
+      padding:3px 8px;
+      cursor:pointer;
+      border-radius:4px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:13px;
+      color:#bcc8dc;
+      transition:background 0.15s;
+    }
+    .tree-item:hover { background:rgba(255,255,255,0.06); }
+    .tree-item.active { background:rgba(122,162,247,0.12); color:#7aa2f7; }
+    .tree-item .icon { width:18px; font-size:14px; opacity:0.7; }
+    .tree-item .name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .tree-item .del-btn { background:none; border:none; color:#6a7a90; cursor:pointer; opacity:0; transition:opacity 0.15s; padding:0 4px; }
+    .tree-item:hover .del-btn { opacity:1; }
+    .tree-item .del-btn:hover { color:#f28b82; }
+    .tree-children { padding-left:20px; }
+    .folder-toggle { cursor:pointer; width:18px; text-align:center; }
+
+    #sidebar .add-btn {
+      background:rgba(255,255,255,0.06);
+      border:none;
+      border-radius:6px;
+      padding:6px 12px;
+      color:#bcc8dc;
+      font-family:inherit;
+      font-size:12px;
+      cursor:pointer;
+      width:100%;
+      margin-top:10px;
+      transition:background 0.15s;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      justify-content:center;
+    }
     #sidebar .add-btn:hover { background:rgba(255,255,255,0.12); }
 
+    /* ----- CENTER (editor + output) ----- */
     #center {
       flex:1;
       display:flex;
       flex-direction:column;
       min-width:0;
-      transition: all 0.25s ease;
     }
     #editor-toolbar {
       flex-shrink:0;
-      height:40px;
+      height:36px;
       background:rgba(14,18,25,0.6);
       border-bottom:1px solid rgba(255,255,255,0.04);
       display:flex;
       align-items:center;
-      padding:0 16px;
+      padding:0 12px;
       gap:12px;
     }
     #editor-toolbar .label { font-size:13px; color:#9aaec9; }
     #editor-toolbar .label span { color:#e0e8f0; font-weight:600; }
     #editor-toolbar .spacer { flex:1; }
-    #editor-toolbar button { background:rgba(255,255,255,0.06); border:none; border-radius:6px; padding:4px 14px; color:#c8d0dc; font-family:inherit; font-size:12px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+    #editor-toolbar button {
+      background:rgba(255,255,255,0.06);
+      border:none;
+      border-radius:6px;
+      padding:4px 12px;
+      color:#c8d0dc;
+      font-family:inherit;
+      font-size:12px;
+      cursor:pointer;
+      transition:all 0.15s;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
     #editor-toolbar button:hover { background:rgba(255,255,255,0.12); }
     #editor-toolbar button.run { background:rgba(122,162,247,0.2); color:#7aa2f7; }
     #editor-toolbar button.run:hover { background:rgba(122,162,247,0.3); }
@@ -142,11 +197,12 @@
     #editor-wrapper .CodeMirror { height:100% !important; font-size:14px; font-family:'JetBrains Mono', monospace; background:#0e1219; }
     .CodeMirror-gutters { background:#0e1219 !important; border-right:1px solid rgba(255,255,255,0.05) !important; }
 
+    /* ----- OUTPUT / TERMINAL PANEL ----- */
     #output-container {
       flex-shrink:0;
-      height:200px;
+      height:220px;
       min-height:120px;
-      max-height:400px;
+      max-height:450px;
       background:rgba(0,0,0,0.5);
       border-top:1px solid rgba(255,255,255,0.06);
       display:flex;
@@ -165,7 +221,7 @@
       flex-shrink:0;
       height:30px;
       background:rgba(14,18,25,0.8);
-      padding:0 16px;
+      padding:0 12px;
       display:flex;
       align-items:center;
       font-size:12px;
@@ -173,11 +229,20 @@
       gap:12px;
       border-bottom:1px solid rgba(255,255,255,0.04);
     }
+    #output-header .tabs { display:flex; gap:8px; }
+    #output-header .tabs span {
+      padding:2px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      background:rgba(255,255,255,0.05);
+      transition:background 0.15s;
+    }
+    #output-header .tabs span.active { background:rgba(122,162,247,0.15); color:#7aa2f7; }
     #output-header .clear-btn { margin-left:auto; background:none; border:none; color:#6a7a90; cursor:pointer; font-size:12px; }
     #output-header .clear-btn:hover { color:#f28b82; }
     #output-content {
       flex:1;
-      padding:8px 16px;
+      padding:6px 12px;
       overflow-y:auto;
       font-family:'JetBrains Mono', monospace;
       font-size:13px;
@@ -191,6 +256,19 @@
     #output-content .info { color:#7aa2f7; }
     #output-content .warn { color:#f7dc6f; }
 
+    /* Terminal inside output */
+    #terminal-container {
+      flex:1;
+      padding:4px 8px;
+      background:transparent;
+      overflow:hidden;
+    }
+    #terminal-container .xterm { height:100%; }
+    #terminal-container .xterm-viewport { background:transparent !important; }
+    #terminal-container .xterm-screen { background:transparent !important; }
+    #terminal-container .xterm-cursor { background-color:#7aa2f7 !important; box-shadow:0 0 12px rgba(122,162,247,0.5); }
+
+    /* ----- CHAT PANEL ----- */
     #chat-panel {
       width:360px;
       min-width:280px;
@@ -241,6 +319,7 @@
     #chat-send:hover { background:#5fcfa0; }
     #chat-send:disabled { opacity:0.5; cursor:not-allowed; }
 
+    /* ----- STATUS BAR ----- */
     #statusbar {
       flex-shrink:0;
       height:28px;
@@ -260,13 +339,15 @@
     #statusbar .spacer { flex:1; }
     #statusbar .item .highlight { color:#c8d0dc; }
 
+    /* ----- SCROLLBARS ----- */
     ::-webkit-scrollbar { width:5px; height:5px; }
     ::-webkit-scrollbar-track { background:transparent; }
     ::-webkit-scrollbar-thumb { background:#2a3547; border-radius:10px; }
     ::-webkit-scrollbar-thumb:hover { background:#3d4b62; }
 
+    /* ----- RESPONSIVE ----- */
     @media (max-width:1024px) {
-      #sidebar { width:170px; min-width:130px; }
+      #sidebar { width:180px; min-width:140px; }
       #chat-panel { width:300px; min-width:220px; }
     }
     @media (max-width:768px) {
@@ -279,9 +360,9 @@
 </head>
 <body>
 <div id="app">
+  <!-- TOP BAR -->
   <div id="topbar">
-    <div class="brand"><i class="fas fa-cube"></i>PySandbox</div>
-    <div class="file-path">~ / <span id="current-file-label">main.py</span></div>
+    <div class="brand"><i class="fas fa-cube"></i>Sandbox</div>
     <div class="spacer"></div>
     <div class="toggle-group">
       <button class="toggle-btn" id="toggle-sidebar" title="Toggle Sidebar"><i class="fas fa-folder"></i></button>
@@ -294,15 +375,21 @@
       <span><i class="fas fa-robot"></i> <span id="ai-status">AI ready</span></span>
     </div>
   </div>
+
+  <!-- MAIN -->
   <div id="main">
+    <!-- SIDEBAR -->
     <div id="sidebar">
       <div class="section-title"><i class="fas fa-folder-open"></i> Explorer</div>
-      <div id="file-list"></div>
+      <div id="file-tree"></div>
       <button class="add-btn" id="new-file-btn"><i class="fas fa-plus"></i> New File</button>
+      <button class="add-btn" id="new-folder-btn" style="margin-top:4px;"><i class="fas fa-folder-plus"></i> New Folder</button>
     </div>
+
+    <!-- CENTER -->
     <div id="center">
       <div id="editor-toolbar">
-        <div class="label">File: <span id="current-file-label2">main.py</span></div>
+        <div class="label">File: <span id="current-file-label">(none)</span></div>
         <div class="spacer"></div>
         <button id="save-btn"><i class="fas fa-save"></i> Save</button>
         <button class="run" id="run-btn"><i class="fas fa-play"></i> Run</button>
@@ -311,12 +398,22 @@
       <div id="editor-wrapper"><textarea id="editor-textarea"></textarea></div>
       <div id="output-container">
         <div id="output-header">
-          <i class="fas fa-terminal"></i> Output
+          <div class="tabs">
+            <span class="active" data-tab="output">Output</span>
+            <span data-tab="terminal">Terminal</span>
+            <span data-tab="preview">Preview</span>
+          </div>
           <button class="clear-btn" id="clear-output"><i class="fas fa-times"></i> Clear</button>
         </div>
-        <div id="output-content"></div>
+        <div id="output-content" style="display:flex; flex-direction:column; overflow:hidden;">
+          <div id="output-text" style="flex:1; overflow-y:auto; padding:8px 12px;"></div>
+          <div id="terminal-container" style="flex:1; display:none;"></div>
+          <iframe id="preview-iframe" style="flex:1; display:none; width:100%; border:none; background:#fff;"></iframe>
+        </div>
       </div>
     </div>
+
+    <!-- CHAT PANEL -->
     <div id="chat-panel">
       <div id="chat-header">
         <i class="fas fa-comment-dots"></i> DeepSeek Assistant
@@ -329,16 +426,17 @@
       </div>
     </div>
   </div>
+
+  <!-- STATUS BAR -->
   <div id="statusbar">
-    <div class="item"><i class="fas fa-code"></i> <span class="highlight">Python 3.11</span></div>
-    <div class="item"><i class="fas fa-file"></i> <span id="status-file">main.py</span></div>
+    <div class="item"><i class="fas fa-code"></i> <span class="highlight">Multi‑lang</span></div>
+    <div class="item"><i class="fas fa-file"></i> <span id="status-file">(none)</span></div>
     <div class="spacer"></div>
     <div class="item"><i class="fas fa-robot"></i> DeepSeek v4‑pro</div>
     <div class="item"><span id="status-cursor">Ln 1, Col 1</span></div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
 <script>
   (function() {
     'use strict';
@@ -346,21 +444,22 @@
     // ─── RAILWAY BACKEND URL ──────────────────────────────────────────
     const PROXY_URL = 'https://battleground-deepseektoken.up.railway.app/api/chat';
 
-    // ---- DOM refs ----
-    const fileListEl = document.getElementById('file-list');
+    // ─── DOM REFS ──────────────────────────────────────────────────────
+    const fileTreeEl = document.getElementById('file-tree');
     const currentFileLabel = document.getElementById('current-file-label');
-    const currentFileLabel2 = document.getElementById('current-file-label2');
     const statusFile = document.getElementById('status-file');
     const statusCursor = document.getElementById('status-cursor');
     const editorTextarea = document.getElementById('editor-textarea');
-    const outputContent = document.getElementById('output-content');
+    const outputText = document.getElementById('output-text');
+    const terminalContainer = document.getElementById('terminal-container');
+    const previewIframe = document.getElementById('preview-iframe');
     const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');
     const chatSend = document.getElementById('chat-send');
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('status-text');
 
-    // ---- Panel elements ----
+    // ─── PANEL ELEMENTS ──────────────────────────────────────────────
     const sidebar = document.getElementById('sidebar');
     const outputContainer = document.getElementById('output-container');
     const chatPanel = document.getElementById('chat-panel');
@@ -369,17 +468,27 @@
     const toggleChatBtn = document.getElementById('toggle-chat');
     const toggleMaximizeBtn = document.getElementById('toggle-maximize');
 
-    // ---- State ----
+    // ─── STATE ────────────────────────────────────────────────────────
     let editor = null;
-    let currentFile = null;
-    let filesystem = {};
+    let currentFilePath = null;          // e.g. '/src/main.py'
+    let filesystem = {};                // path -> content (for files)
+    let folderStructure = { '/': { type: 'folder', children: {} } };
     let pyodide = null;
     let isRunning = false;
     let conversation = [];
     let isChatProcessing = false;
 
-    // ---- Layout state (stored in localStorage) ----
-    const LAYOUT_KEY = 'pysandbox_layout';
+    // Terminal
+    let terminal = null;
+    let fitAddon = null;
+    let terminalReady = false;
+    let currentTerminalDir = '/';
+    let terminalHistory = [];
+    let terminalHistoryIndex = 0;
+    let terminalInputBuffer = '';
+
+    // Layout
+    const LAYOUT_KEY = 'sandbox_layout';
     let layoutState = {
       sidebarHidden: false,
       outputHidden: false,
@@ -387,6 +496,7 @@
       maximized: false,
     };
 
+    // ─── LAYOUT PERSISTENCE ──────────────────────────────────────────
     function loadLayout() {
       try {
         const saved = localStorage.getItem(LAYOUT_KEY);
@@ -396,16 +506,13 @@
     function saveLayout() {
       localStorage.setItem(LAYOUT_KEY, JSON.stringify(layoutState));
     }
-
     function applyLayout() {
       sidebar.classList.toggle('hidden', layoutState.sidebarHidden);
       outputContainer.classList.toggle('hidden', layoutState.outputHidden);
       chatPanel.classList.toggle('hidden', layoutState.chatHidden);
-      // Update button states
       toggleSidebarBtn.classList.toggle('active', !layoutState.sidebarHidden);
       toggleOutputBtn.classList.toggle('active', !layoutState.outputHidden);
       toggleChatBtn.classList.toggle('active', !layoutState.chatHidden);
-      // Maximize: hide all panels except center
       if (layoutState.maximized) {
         sidebar.classList.add('hidden');
         outputContainer.classList.add('hidden');
@@ -413,7 +520,6 @@
         toggleMaximizeBtn.classList.add('active');
         toggleMaximizeBtn.innerHTML = '<i class="fas fa-compress"></i>';
       } else {
-        // Re-apply individual toggles (they might have been overridden by maximize)
         sidebar.classList.toggle('hidden', layoutState.sidebarHidden);
         outputContainer.classList.toggle('hidden', layoutState.outputHidden);
         chatPanel.classList.toggle('hidden', layoutState.chatHidden);
@@ -421,23 +527,15 @@
         toggleMaximizeBtn.innerHTML = '<i class="fas fa-expand"></i>';
       }
     }
-
     function togglePanel(panel) {
-      if (layoutState.maximized) {
-        layoutState.maximized = false;
-      }
-      if (panel === 'sidebar') {
-        layoutState.sidebarHidden = !layoutState.sidebarHidden;
-      } else if (panel === 'output') {
-        layoutState.outputHidden = !layoutState.outputHidden;
-      } else if (panel === 'chat') {
-        layoutState.chatHidden = !layoutState.chatHidden;
-      }
+      if (layoutState.maximized) layoutState.maximized = false;
+      if (panel === 'sidebar') layoutState.sidebarHidden = !layoutState.sidebarHidden;
+      else if (panel === 'output') layoutState.outputHidden = !layoutState.outputHidden;
+      else if (panel === 'chat') layoutState.chatHidden = !layoutState.chatHidden;
       layoutState.maximized = false;
       saveLayout();
       applyLayout();
     }
-
     function toggleMaximize() {
       layoutState.maximized = !layoutState.maximized;
       saveLayout();
@@ -451,21 +549,239 @@
       }
     }
 
-    // ---- Persistence (files & chat) ----
+    // ─── FILE SYSTEM PERSISTENCE ────────────────────────────────────
     function loadState() {
       try {
-        const files = localStorage.getItem('pysandbox_files');
-        if (files) filesystem = JSON.parse(files);
-        const conv = localStorage.getItem('pysandbox_chat');
+        const fs = localStorage.getItem('sandbox_fs');
+        if (fs) {
+          const parsed = JSON.parse(fs);
+          filesystem = parsed.files || {};
+          folderStructure = parsed.folders || { '/': { type: 'folder', children: {} } };
+        } else {
+          // Default: create a main.py
+          filesystem['/main.py'] = 'print("Hello, World!")';
+          folderStructure['/'] = { type: 'folder', children: { 'main.py': true } };
+        }
+        const conv = localStorage.getItem('sandbox_chat');
         if (conv) conversation = JSON.parse(conv);
       } catch (_) {}
     }
     function saveState() {
-      localStorage.setItem('pysandbox_files', JSON.stringify(filesystem));
-      localStorage.setItem('pysandbox_chat', JSON.stringify(conversation));
+      localStorage.setItem('sandbox_fs', JSON.stringify({ files: filesystem, folders: folderStructure }));
+      localStorage.setItem('sandbox_chat', JSON.stringify(conversation));
     }
 
-    // ---- Editor with VS Code keybindings & bracket fix ----
+    // ─── FILE TREE RENDER ────────────────────────────────────────────
+    function renderTree() {
+      // Build tree from folderStructure
+      function renderNode(path, node) {
+        const div = document.createElement('div');
+        if (node.type === 'folder') {
+          const header = document.createElement('div');
+          header.className = 'tree-item folder';
+          header.innerHTML = `
+            <span class="folder-toggle"><i class="fas fa-chevron-down"></i></span>
+            <span class="icon"><i class="fas fa-folder"></i></span>
+            <span class="name">${path.split('/').pop() || '/'}</span>
+          `;
+          const childrenDiv = document.createElement('div');
+          childrenDiv.className = 'tree-children';
+          // Sort keys: folders first, then files
+          const keys = Object.keys(node.children || {}).sort((a,b) => {
+            const aIsFolder = folderStructure[path + (path.endsWith('/')?'':'/') + a]?.type === 'folder';
+            const bIsFolder = folderStructure[path + (path.endsWith('/')?'':'/') + b]?.type === 'folder';
+            return aIsFolder === bIsFolder ? a.localeCompare(b) : aIsFolder ? -1 : 1;
+          });
+          for (const child of keys) {
+            const childPath = path + (path.endsWith('/')?'':'/') + child;
+            const childNode = folderStructure[childPath];
+            if (childNode) {
+              childrenDiv.appendChild(renderNode(childPath, childNode));
+            }
+          }
+          header.addEventListener('click', () => {
+            const children = header.parentElement.querySelector('.tree-children');
+            const icon = header.querySelector('.folder-toggle i');
+            if (children.style.display === 'none') {
+              children.style.display = '';
+              icon.className = 'fas fa-chevron-down';
+            } else {
+              children.style.display = 'none';
+              icon.className = 'fas fa-chevron-right';
+            }
+          });
+          div.appendChild(header);
+          div.appendChild(childrenDiv);
+        } else {
+          // file
+          const item = document.createElement('div');
+          item.className = 'tree-item file';
+          if (path === currentFilePath) item.classList.add('active');
+          const ext = path.split('.').pop();
+          let icon = 'fa-regular fa-file';
+          if (ext === 'py') icon = 'fa-brands fa-python';
+          else if (ext === 'js') icon = 'fa-brands fa-js';
+          else if (ext === 'html') icon = 'fa-brands fa-html5';
+          else if (ext === 'css') icon = 'fa-brands fa-css3-alt';
+          else if (ext === 'json') icon = 'fa-regular fa-file-code';
+          item.innerHTML = `
+            <span class="icon"><i class="${icon}"></i></span>
+            <span class="name">${path.split('/').pop()}</span>
+            <button class="del-btn" data-path="${path}"><i class="fas fa-times"></i></button>
+          `;
+          item.addEventListener('click', (e) => {
+            if (e.target.closest('.del-btn')) return;
+            openFile(path);
+          });
+          const del = item.querySelector('.del-btn');
+          if (del) {
+            del.addEventListener('click', (e) => {
+              e.stopPropagation();
+              deleteFile(path);
+            });
+          }
+          div.appendChild(item);
+        }
+        return div;
+      }
+
+      fileTreeEl.innerHTML = '';
+      const root = folderStructure['/'];
+      if (root) {
+        fileTreeEl.appendChild(renderNode('/', root));
+      }
+    }
+
+    // ─── FILE OPERATIONS ─────────────────────────────────────────────
+    function openFile(path) {
+      if (!filesystem[path]) {
+        // If file doesn't exist, create it
+        filesystem[path] = '';
+        // Add to folder structure
+        const parts = path.split('/').filter(p => p);
+        let current = '/';
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i];
+          const parent = current;
+          const childPath = parent + (parent.endsWith('/')?'':'/') + part;
+          if (i === parts.length - 1) {
+            // file
+            if (!folderStructure[parent]) folderStructure[parent] = { type: 'folder', children: {} };
+            folderStructure[parent].children[part] = true;
+            // Ensure file entry
+            filesystem[childPath] = filesystem[childPath] || '';
+          } else {
+            // folder
+            if (!folderStructure[childPath]) {
+              folderStructure[childPath] = { type: 'folder', children: {} };
+              folderStructure[parent].children[part] = true;
+            }
+          }
+          current = childPath;
+        }
+        saveState();
+      }
+      currentFilePath = path;
+      const content = filesystem[path] || '';
+      editor.setValue(content);
+      // Set language mode
+      const ext = path.split('.').pop();
+      let mode = 'python';
+      if (ext === 'js') mode = 'javascript';
+      else if (ext === 'html') mode = 'htmlmixed';
+      else if (ext === 'css') mode = 'css';
+      else if (ext === 'json') mode = 'javascript';
+      editor.setOption('mode', mode);
+      // Update UI
+      currentFileLabel.textContent = path;
+      statusFile.textContent = path;
+      renderTree();
+      updateCursorStatus();
+    }
+
+    function saveCurrentFile() {
+      if (!currentFilePath) return;
+      filesystem[currentFilePath] = editor.getValue();
+      saveState();
+      const btn = document.getElementById('save-btn');
+      btn.style.color = '#7ae0b0';
+      setTimeout(() => btn.style.color = '', 300);
+    }
+
+    function deleteFile(path) {
+      if (!confirm(`Delete "${path}"?`)) return;
+      delete filesystem[path];
+      // Remove from folder structure
+      const parts = path.split('/').filter(p => p);
+      const parentPath = parts.slice(0, -1).join('/') || '/';
+      const name = parts[parts.length-1];
+      if (folderStructure[parentPath] && folderStructure[parentPath].children) {
+        delete folderStructure[parentPath].children[name];
+      }
+      if (currentFilePath === path) {
+        const keys = Object.keys(filesystem);
+        if (keys.length > 0) openFile(keys[0]);
+        else {
+          currentFilePath = null;
+          editor.setValue('');
+          currentFileLabel.textContent = '(none)';
+          statusFile.textContent = '(none)';
+        }
+      }
+      saveState();
+      renderTree();
+    }
+
+    function createFile(path, content = '') {
+      if (filesystem[path] !== undefined) return;
+      const parts = path.split('/').filter(p => p);
+      let current = '/';
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        const parent = current;
+        const childPath = parent + (parent.endsWith('/')?'':'/') + part;
+        if (i === parts.length - 1) {
+          if (!folderStructure[parent]) folderStructure[parent] = { type: 'folder', children: {} };
+          folderStructure[parent].children[part] = true;
+          filesystem[childPath] = content;
+        } else {
+          if (!folderStructure[childPath]) {
+            folderStructure[childPath] = { type: 'folder', children: {} };
+            folderStructure[parent].children[part] = true;
+          }
+        }
+        current = childPath;
+      }
+      saveState();
+      renderTree();
+      openFile(path);
+    }
+
+    function createFolder(path) {
+      if (folderStructure[path]) return;
+      const parts = path.split('/').filter(p => p);
+      let current = '/';
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        const parent = current;
+        const childPath = parent + (parent.endsWith('/')?'':'/') + part;
+        if (i === parts.length - 1) {
+          if (!folderStructure[parent]) folderStructure[parent] = { type: 'folder', children: {} };
+          folderStructure[parent].children[part] = true;
+          folderStructure[childPath] = { type: 'folder', children: {} };
+        } else {
+          if (!folderStructure[childPath]) {
+            folderStructure[childPath] = { type: 'folder', children: {} };
+            folderStructure[parent].children[part] = true;
+          }
+        }
+        current = childPath;
+      }
+      saveState();
+      renderTree();
+    }
+
+    // ─── EDITOR INIT ──────────────────────────────────────────────────
     function initEditor() {
       editor = CodeMirror.fromTextArea(editorTextarea, {
         mode: 'python',
@@ -492,15 +808,15 @@
       });
       editor.on('cursorActivity', updateCursorStatus);
       editor.on('change', () => {
-        if (currentFile && filesystem[currentFile] !== undefined) {
+        if (currentFilePath && filesystem[currentFilePath] !== undefined) {
           clearTimeout(window._autoSaveTimer);
           window._autoSaveTimer = setTimeout(saveCurrentFile, 1000);
         }
       });
+      // Load first file
       const keys = Object.keys(filesystem);
       if (keys.length > 0) openFile(keys[0]);
-      else createNewFile('main.py');
-      renderFileList();
+      else createFile('/main.py', 'print("Hello, World!")');
     }
 
     function updateCursorStatus() {
@@ -509,83 +825,7 @@
       statusCursor.textContent = `Ln ${pos.line + 1}, Col ${pos.ch + 1}`;
     }
 
-    function openFile(filename) {
-      if (!filesystem[filename]) {
-        filesystem[filename] = '';
-        saveState();
-      }
-      currentFile = filename;
-      editor.setValue(filesystem[filename]);
-      currentFileLabel.textContent = filename;
-      currentFileLabel2.textContent = filename;
-      statusFile.textContent = filename;
-      renderFileList();
-      document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
-      const target = document.querySelector(`.file-item[data-file="${filename}"]`);
-      if (target) target.classList.add('active');
-      updateCursorStatus();
-    }
-
-    function saveCurrentFile() {
-      if (!currentFile) return;
-      filesystem[currentFile] = editor.getValue();
-      saveState();
-      const btn = document.getElementById('save-btn');
-      btn.style.color = '#7ae0b0';
-      setTimeout(() => btn.style.color = '', 300);
-    }
-
-    function createNewFile(name) {
-      if (filesystem[name] !== undefined) return;
-      filesystem[name] = '';
-      saveState();
-      openFile(name);
-      renderFileList();
-    }
-
-    function deleteFile(name) {
-      if (!confirm(`Delete "${name}"?`)) return;
-      delete filesystem[name];
-      if (currentFile === name) {
-        const keys = Object.keys(filesystem);
-        if (keys.length > 0) openFile(keys[0]);
-        else createNewFile('main.py');
-      }
-      saveState();
-      renderFileList();
-    }
-
-    function renderFileList() {
-      const names = Object.keys(filesystem).sort();
-      let html = '';
-      names.forEach(name => {
-        const active = name === currentFile ? 'active' : '';
-        html += `
-          <div class="file-item ${active}" data-file="${name}">
-            <i class="fa-brands fa-python"></i>
-            <span class="fname">${name}</span>
-            <button class="del-btn" data-file="${name}"><i class="fas fa-times"></i></button>
-          </div>
-        `;
-      });
-      fileListEl.innerHTML = html;
-      fileListEl.querySelectorAll('.file-item').forEach(el => {
-        el.addEventListener('click', (e) => {
-          if (e.target.closest('.del-btn')) return;
-          const fname = el.dataset.file;
-          if (fname) openFile(fname);
-        });
-        const del = el.querySelector('.del-btn');
-        if (del) {
-          del.addEventListener('click', (e) => {
-            e.stopPropagation();
-            deleteFile(del.dataset.file);
-          });
-        }
-      });
-    }
-
-    // ---- Pyodide ----
+    // ─── PYODIDE INIT ──────────────────────────────────────────────────
     async function initPyodide() {
       statusText.textContent = 'Loading Pyodide...';
       statusDot.className = 'dot off';
@@ -609,26 +849,255 @@
       }
     }
 
-    // ---- Run Python with import warning ----
-    async function runCode() {
-      if (isRunning) return;
-      if (!pyodide) {
-        appendOutput('Pyodide not ready yet.\n', 'error');
+    // ─── OUTPUT / TERMINAL ──────────────────────────────────────────────
+    function appendOutput(text, className = '') {
+      const lines = text.split('\n');
+      for (const line of lines) {
+        if (line.trim() === '') continue;
+        const div = document.createElement('div');
+        div.className = className || '';
+        div.textContent = line;
+        outputText.appendChild(div);
+      }
+      outputText.scrollTop = outputText.scrollHeight;
+    }
+
+    function clearOutput() {
+      outputText.innerHTML = '';
+    }
+
+    // Terminal
+    function initTerminal() {
+      terminal = new Terminal({
+        cursorBlink: true,
+        fontSize: 13,
+        fontFamily: '"JetBrains Mono", monospace',
+        theme: {
+          background: '#0b0e14',
+          foreground: '#c8d0dc',
+          cursor: '#7aa2f7',
+          cursorAccent: '#0b0e14',
+          selection: 'rgba(122,162,247,0.25)',
+          black: '#181e28',
+          red: '#f28b82',
+          green: '#7ae0b0',
+          yellow: '#f7dc6f',
+          blue: '#7aa2f7',
+          magenta: '#bb6bd9',
+          cyan: '#5bc0de',
+          white: '#e8edf5',
+          brightBlack: '#6a7a90',
+          brightRed: '#ff6b6b',
+          brightGreen: '#8ce0a0',
+          brightYellow: '#f7dc6f',
+          brightBlue: '#7aa2f7',
+          brightMagenta: '#d4a0e8',
+          brightCyan: '#8ad8e8',
+          brightWhite: '#f0f4fc'
+        },
+        convertEol: true,
+        scrollback: 2000,
+        tabStopWidth: 4,
+      });
+      fitAddon = new FitAddon.FitAddon();
+      const webLinksAddon = new WebLinksAddon.WebLinksAddon();
+      terminal.loadAddon(fitAddon);
+      terminal.loadAddon(webLinksAddon);
+      terminal.open(terminalContainer);
+      fitAddon.fit();
+
+      terminal.onKey((e) => {
+        const ev = e.domEvent;
+        const key = e.key;
+        if (ev.key === 'Enter') {
+          const line = terminalInputBuffer.trim();
+          terminalInputBuffer = '';
+          terminal.writeln('');
+          if (line) {
+            terminalHistory.push(line);
+            terminalHistoryIndex = terminalHistory.length;
+            handleTerminalCommand(line);
+          } else {
+            writeTerminalPrompt();
+          }
+          ev.preventDefault();
+        } else if (ev.key === 'Backspace') {
+          if (terminalInputBuffer.length > 0) {
+            terminalInputBuffer = terminalInputBuffer.slice(0, -1);
+            terminal.write('\x1b[1D\x1b[K');
+          }
+          ev.preventDefault();
+        } else if (ev.key === 'ArrowUp') {
+          if (terminalHistoryIndex > 0) {
+            terminalHistoryIndex--;
+            const hist = terminalHistory[terminalHistoryIndex] || '';
+            terminal.write('\r\x1b[K');
+            writeTerminalPrompt();
+            terminal.write(hist);
+            terminalInputBuffer = hist;
+          }
+          ev.preventDefault();
+        } else if (ev.key === 'ArrowDown') {
+          if (terminalHistoryIndex < terminalHistory.length - 1) {
+            terminalHistoryIndex++;
+            const hist = terminalHistory[terminalHistoryIndex] || '';
+            terminal.write('\r\x1b[K');
+            writeTerminalPrompt();
+            terminal.write(hist);
+            terminalInputBuffer = hist;
+          } else {
+            terminalHistoryIndex = terminalHistory.length;
+            terminal.write('\r\x1b[K');
+            writeTerminalPrompt();
+            terminalInputBuffer = '';
+          }
+          ev.preventDefault();
+        } else if (key.length === 1 && key.charCodeAt(0) >= 32) {
+          terminalInputBuffer += key;
+          terminal.write(key);
+        }
+      });
+
+      terminalReady = true;
+      writeTerminalPrompt();
+    }
+
+    function writeTerminalPrompt() {
+      terminal.write(`\r\n\x1b[36m${currentTerminalDir} $ \x1b[0m`);
+    }
+
+    function handleTerminalCommand(cmd) {
+      const parts = cmd.split(/\s+/);
+      const command = parts[0];
+      const args = parts.slice(1);
+
+      if (command === 'ls') {
+        const path = currentTerminalDir;
+        const node = folderStructure[path];
+        if (node && node.type === 'folder') {
+          const children = Object.keys(node.children || {});
+          if (children.length === 0) {
+            terminal.writeln('(empty)');
+          } else {
+            children.forEach(child => {
+              const childPath = path + (path.endsWith('/')?'':'/') + child;
+              const isFolder = folderStructure[childPath]?.type === 'folder';
+              terminal.writeln(`${isFolder ? '\x1b[36m' : ''}${child}${isFolder ? '/' : ''}\x1b[0m`);
+            });
+          }
+        } else {
+          terminal.writeln('\x1b[31mNot a directory\x1b[0m');
+        }
+        writeTerminalPrompt();
         return;
       }
-      if (!currentFile) return;
 
-      const code = editor.getValue();
+      if (command === 'cd') {
+        if (args.length === 0) {
+          currentTerminalDir = '/';
+          writeTerminalPrompt();
+          return;
+        }
+        const target = args[0];
+        let newPath;
+        if (target.startsWith('/')) {
+          newPath = target;
+        } else {
+          newPath = currentTerminalDir + (currentTerminalDir.endsWith('/')?'':'/') + target;
+        }
+        // Normalize
+        newPath = newPath.replace(/\/+/g, '/');
+        if (folderStructure[newPath] && folderStructure[newPath].type === 'folder') {
+          currentTerminalDir = newPath;
+        } else {
+          terminal.writeln(`\x1b[31mcd: ${target}: No such directory\x1b[0m`);
+        }
+        writeTerminalPrompt();
+        return;
+      }
+
+      if (command === 'cat') {
+        if (args.length === 0) {
+          terminal.writeln('\x1b[31mUsage: cat <file>\x1b[0m');
+          writeTerminalPrompt();
+          return;
+        }
+        const filePath = currentTerminalDir + (currentTerminalDir.endsWith('/')?'':'/') + args[0];
+        if (filesystem[filePath] !== undefined) {
+          terminal.writeln(filesystem[filePath]);
+        } else {
+          terminal.writeln(`\x1b[31mcat: ${args[0]}: No such file\x1b[0m`);
+        }
+        writeTerminalPrompt();
+        return;
+      }
+
+      if (command === 'run' || command === 'python' || command === 'node') {
+        if (args.length === 0) {
+          terminal.writeln(`\x1b[31mUsage: ${command} <file>\x1b[0m`);
+          writeTerminalPrompt();
+          return;
+        }
+        const filePath = currentTerminalDir + (currentTerminalDir.endsWith('/')?'':'/') + args[0];
+        if (filesystem[filePath] === undefined) {
+          terminal.writeln(`\x1b[31m${command}: ${args[0]}: No such file\x1b[0m`);
+          writeTerminalPrompt();
+          return;
+        }
+        // Execute based on extension
+        const ext = filePath.split('.').pop();
+        if (command === 'python' || (command === 'run' && ext === 'py')) {
+          runPython(filePath);
+        } else if (command === 'node' || (command === 'run' && ext === 'js')) {
+          runJavaScript(filePath);
+        } else if (command === 'run' && ext === 'html') {
+          runHTML(filePath);
+        } else {
+          terminal.writeln(`\x1b[31mDon't know how to run ${ext} files\x1b[0m`);
+          writeTerminalPrompt();
+        }
+        return;
+      }
+
+      if (command === 'clear') {
+        terminal.clear();
+        writeTerminalPrompt();
+        return;
+      }
+
+      if (command === 'help') {
+        terminal.writeln('\x1b[36mAvailable commands:\x1b[0m');
+        terminal.writeln('  ls                  List files');
+        terminal.writeln('  cd <dir>            Change directory');
+        terminal.writeln('  cat <file>          Show file contents');
+        terminal.writeln('  run <file>          Run Python/JS/HTML file');
+        terminal.writeln('  python <file>       Run Python file');
+        terminal.writeln('  node <file>         Run JS file');
+        terminal.writeln('  clear               Clear terminal');
+        terminal.writeln('  help                Show this help');
+        writeTerminalPrompt();
+        return;
+      }
+
+      terminal.writeln(`\x1b[31mCommand not found: ${command}\x1b[0m`);
+      writeTerminalPrompt();
+    }
+
+    // ─── CODE EXECUTION ──────────────────────────────────────────────
+    function runPython(filePath) {
+      const code = filesystem[filePath] || '';
       if (!code.trim()) {
         appendOutput('No code to run.\n', 'info');
         return;
       }
-
+      if (!pyodide) {
+        appendOutput('Pyodide not ready.\n', 'error');
+        return;
+      }
       isRunning = true;
       document.getElementById('run-btn').disabled = true;
-      appendOutput(`\n--- Running ${currentFile} ---\n`, 'info');
+      appendOutput(`\n--- Running ${filePath} ---\n`, 'info');
 
-      let output = '';
       const captureCode = `
 import sys
 from io import StringIO
@@ -648,59 +1117,121 @@ finally:
     __output + __error
 `;
 
-      try {
-        const result = await pyodide.runPythonAsync(captureCode);
+      pyodide.runPythonAsync(captureCode).then(result => {
         if (result && result.trim()) {
-          output += result;
+          appendOutput(result, '');
+        } else {
+          appendOutput('(no output)\n', 'info');
         }
-      } catch (err) {
+        appendOutput(`--- End of output ---\n`, 'info');
+        isRunning = false;
+        document.getElementById('run-btn').disabled = false;
+      }).catch(err => {
         const errMsg = err.message || String(err);
         if (errMsg.includes('ModuleNotFoundError') || errMsg.includes('No module named')) {
           const match = errMsg.match(/No module named ['"]([^'"]+)['"]/);
           if (match) {
             const moduleName = match[1];
-            output += `\x1b[33m[WARNING] Library '${moduleName}' is not installed.\x1b[0m\n`;
-            output += `\x1b[33mTo install it, add this to your code:\x1b[0m\n`;
-            output += `\x1b[36mimport micropip\nawait micropip.install('${moduleName}')\x1b[0m\n`;
-            output += `\x1b[33mThen import it after installation.\x1b[0m\n`;
-            output += `\nOriginal error: ${errMsg}\n`;
+            appendOutput(`\x1b[33m[WARNING] Library '${moduleName}' is not installed.\x1b[0m\n`, 'warn');
+            appendOutput(`\x1b[33mTo install it, add this to your code:\x1b[0m\n`, 'warn');
+            appendOutput(`\x1b[36mimport micropip\nawait micropip.install('${moduleName}')\x1b[0m\n`, 'info');
+            appendOutput(`\x1b[33mThen import it after installation.\x1b[0m\n`, 'warn');
           } else {
-            output += `\x1b[31m${errMsg}\x1b[0m\n`;
+            appendOutput(`\x1b[31m${errMsg}\x1b[0m\n`, 'error');
           }
         } else {
-          output += `\x1b[31m${errMsg}\x1b[0m\n`;
+          appendOutput(`\x1b[31m${errMsg}\x1b[0m\n`, 'error');
         }
-      }
+        isRunning = false;
+        document.getElementById('run-btn').disabled = false;
+      });
+    }
 
-      if (output.trim()) {
-        appendOutput(output, '');
-      } else {
-        appendOutput('(no output)\n', 'info');
+    function runJavaScript(filePath) {
+      const code = filesystem[filePath] || '';
+      if (!code.trim()) {
+        appendOutput('No code to run.\n', 'info');
+        return;
       }
+      // Execute in sandboxed iframe
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+      const win = iframe.contentWindow;
+      const oldLog = win.console.log;
+      const oldError = win.console.error;
+      let output = '';
+      win.console.log = function(...args) {
+        output += args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ') + '\n';
+      };
+      win.console.error = function(...args) {
+        output += '\x1b[31m' + args.map(a => String(a)).join(' ') + '\x1b[0m\n';
+      };
+      try {
+        const result = win.eval(code);
+        if (result !== undefined) {
+          output += '→ ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result)) + '\n';
+        }
+      } catch (e) {
+        output += '\x1b[31m' + e.message + '\x1b[0m\n';
+      }
+      win.console.log = oldLog;
+      win.console.error = oldError;
+      document.body.removeChild(iframe);
+      appendOutput(`\n--- Running ${filePath} ---\n`, 'info');
+      appendOutput(output.trim() || '(no output)\n', '');
       appendOutput(`--- End of output ---\n`, 'info');
-
-      isRunning = false;
-      document.getElementById('run-btn').disabled = false;
     }
 
-    // ---- Output helpers ----
-    function appendOutput(text, className = '') {
-      const lines = text.split('\n');
-      for (const line of lines) {
-        if (line.trim() === '') continue;
-        const div = document.createElement('div');
-        div.className = className || '';
-        div.textContent = line;
-        outputContent.appendChild(div);
+    function runHTML(filePath) {
+      const html = filesystem[filePath] || '';
+      if (!html.trim()) {
+        appendOutput('No content to preview.\n', 'info');
+        return;
       }
-      outputContent.scrollTop = outputContent.scrollHeight;
+      // Show in preview iframe
+      showPreviewTab();
+      previewIframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+      appendOutput(`\n--- Previewing ${filePath} ---\n`, 'info');
     }
 
-    function clearOutput() {
-      outputContent.innerHTML = '';
+    function runCode() {
+      if (!currentFilePath) {
+        appendOutput('No file open.\n', 'error');
+        return;
+      }
+      const ext = currentFilePath.split('.').pop();
+      if (ext === 'py') runPython(currentFilePath);
+      else if (ext === 'js') runJavaScript(currentFilePath);
+      else if (ext === 'html') runHTML(currentFilePath);
+      else appendOutput(`\x1b[31mDon't know how to run .${ext} files\x1b[0m\n`, 'error');
     }
 
-    // ---- Chat ----
+    // ─── TAB SWITCHING (output/terminal/preview) ──────────────────
+    function showOutputTab() {
+      outputText.style.display = '';
+      terminalContainer.style.display = 'none';
+      previewIframe.style.display = 'none';
+      document.querySelectorAll('.tabs span').forEach(t => t.classList.remove('active'));
+      document.querySelector('.tabs span[data-tab="output"]').classList.add('active');
+    }
+    function showTerminalTab() {
+      outputText.style.display = 'none';
+      terminalContainer.style.display = '';
+      previewIframe.style.display = 'none';
+      document.querySelectorAll('.tabs span').forEach(t => t.classList.remove('active'));
+      document.querySelector('.tabs span[data-tab="terminal"]').classList.add('active');
+      if (terminalReady) fitAddon.fit();
+    }
+    function showPreviewTab() {
+      outputText.style.display = 'none';
+      terminalContainer.style.display = 'none';
+      previewIframe.style.display = '';
+      document.querySelectorAll('.tabs span').forEach(t => t.classList.remove('active'));
+      document.querySelector('.tabs span[data-tab="preview"]').classList.add('active');
+    }
+
+    // ─── CHAT ──────────────────────────────────────────────────────────
     async function sendChatMessage(userMessage) {
       if (isChatProcessing) return;
       if (!userMessage.trim()) return;
@@ -717,7 +1248,7 @@ finally:
 
       try {
         const messages = [
-          { role: 'system', content: 'You are an expert Python developer and coding assistant. Help users write, debug, and understand Python code. Provide clear explanations and code examples. Be concise but thorough.' },
+          { role: 'system', content: 'You are an expert developer and coding assistant. Help users write, debug, and understand code in any language. Provide clear explanations and code examples. Be concise but thorough.' },
           ...conversation
         ];
 
@@ -810,45 +1341,72 @@ finally:
     }
 
     async function explainCode() {
-      if (!currentFile) return;
+      if (!currentFilePath) return;
       const code = editor.getValue();
       if (!code.trim()) {
         appendOutput('No code to explain.\n', 'info');
         return;
       }
-      const prompt = `Explain this Python code in detail:\n\n${code}`;
+      const prompt = `Explain this code (${currentFilePath}) in detail:\n\n${code}`;
       await sendChatMessage(prompt);
     }
 
-    // ---- Init ----
+    // ─── INIT ──────────────────────────────────────────────────────────
     function init() {
       loadState();
       loadLayout();
       initEditor();
       applyLayout();
 
-      // ---- Panel toggle events ----
+      // ---- Panel toggles ----
       toggleSidebarBtn.addEventListener('click', () => togglePanel('sidebar'));
       toggleOutputBtn.addEventListener('click', () => togglePanel('output'));
       toggleChatBtn.addEventListener('click', () => togglePanel('chat'));
       toggleMaximizeBtn.addEventListener('click', toggleMaximize);
 
+      // ---- Editor buttons ----
       document.getElementById('save-btn').addEventListener('click', saveCurrentFile);
       document.getElementById('run-btn').addEventListener('click', runCode);
       document.getElementById('explain-btn').addEventListener('click', explainCode);
+
+      // ---- New file/folder ----
       document.getElementById('new-file-btn').addEventListener('click', () => {
-        const name = prompt('New file name (e.g., script.py):');
+        const name = prompt('New file path (e.g., /src/app.js):');
         if (name && name.trim()) {
-          const fname = name.trim();
-          if (filesystem[fname] !== undefined) {
+          const path = name.trim().startsWith('/') ? name.trim() : '/' + name.trim();
+          if (filesystem[path] !== undefined) {
             alert('File already exists.');
           } else {
-            createNewFile(fname);
+            createFile(path, '');
           }
         }
       });
+      document.getElementById('new-folder-btn').addEventListener('click', () => {
+        const name = prompt('New folder path (e.g., /src):');
+        if (name && name.trim()) {
+          const path = name.trim().startsWith('/') ? name.trim() : '/' + name.trim();
+          if (folderStructure[path]) {
+            alert('Folder already exists.');
+          } else {
+            createFolder(path);
+          }
+        }
+      });
+
+      // ---- Output tab switching ----
+      document.querySelectorAll('.tabs span').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabName = tab.dataset.tab;
+          if (tabName === 'output') showOutputTab();
+          else if (tabName === 'terminal') showTerminalTab();
+          else if (tabName === 'preview') showPreviewTab();
+        });
+      });
+
+      // ---- Clear output ----
       document.getElementById('clear-output').addEventListener('click', clearOutput);
 
+      // ---- Chat ----
       chatSend.addEventListener('click', () => {
         sendChatMessage(chatInput.value);
       });
@@ -863,15 +1421,19 @@ finally:
         chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
       });
 
-      // Load previous chat
+      // ---- Load previous chat ----
       conversation.forEach(msg => {
         addMessage(msg.role, msg.content);
       });
 
+      // ---- Init Pyodide & Terminal ----
       initPyodide();
+      initTerminal();
 
+      // ---- Resize ----
       window.addEventListener('resize', () => {
         if (editor) editor.refresh();
+        if (terminalReady) fitAddon.fit();
       });
     }
 
