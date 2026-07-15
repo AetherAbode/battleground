@@ -3,182 +3,336 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pro Sandbox • DeepSeek AI</title>
+  <title>Sandbox IDE</title>
 
-  <!-- Content Security Policy (meta) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://battleground-deepseektoken.up.railway.app;">
-
-  <!-- CodeMirror (with SRI) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" integrity="sha384-5yN/pzgNE4Hp4YhD6U6bX7I+BvloPkZ+M5rIS1wRwK6IYAn3tPFHXQqY0zLJg8xM" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css" integrity="sha384-5L9L7qT9K9qY5n1UxnKl8wLJQNl+RVgBd1F3rLwWQoHnXpL5Nn5uFC6s8fSLpCgI" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" integrity="sha384-9y7cT6I4eP7x04ZNYgCzwP2mlxVshjzvKquXHV6t9pnWp1vTXh4uW3PJhP2n0pQl" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css" integrity="sha384-q0TpUh2tQYKmDvC5HfhDnPgfGMBoPJ6p/PIcrqHmExZvCPihLShNWoP5cWSc2oyv" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/dialog/dialog.min.css" integrity="sha384-mZ3IrkGwn5+RrnqQZg6JW3P80l7fybF2D0C6SJIVr6smxKfzD+9uSUWovma4MmO/" crossorigin="anonymous" />
-
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js" integrity="sha384-6Z/KYfnO34eBfPwH2hFdzwy5Sf5V4d92Azp2ocLLlK3wQlIWfA3/zp3zNsCzWetL" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js" integrity="sha384-0G6WImQpYx9lDmQ2lYorduLTCfqjq4h55nrCQs7A/TYcY1jE1L4BxH6S2/TWmMlP" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js" integrity="sha384-3nVlTLN5G5Fh0f6qbzPm6Xe+o0X5B0iCtfB3sOXygE/0mMA4ZveDu3z0+QpUjHLI" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js" integrity="sha384-OWPAGZz8b+KQPYX1bRpsplzONC8C9+/r6DL03IuKgh3Q+uEybcIL4sCYyCj2tpck" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js" integrity="sha384-6KohvLpBYh/zbrLhP5bOkMlEcfUEhEw8z//IOJDCUgXQcYbQptDXx5eHtFyLJ+2F" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js" integrity="sha384-5F/BOYKdrxTgV/9g3N1+4y/aFzI2cVhGjD8HBh2zlhi2RSP3lH31RfPJmhVVNHh5" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js" integrity="sha384-8zMUN8Rr9IrDm/lx+9g4Ils0v3hhC7neWtQ9fdA9tXWrq/+7aXIT5Y4ZjsYhc4ak" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js" integrity="sha384-4U+UzghijcIxTysacvCHuA68cK9Wkw/UDD8p/UPcCpxW5jwQcITnVKqBU6EqR08B" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js" integrity="sha384-smaIYB28Tj7jt1/smCY90msG1C74I1c7eIfz7Jv45oMEWUIwpOXdQMFV5OCe9hHX" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js" integrity="sha384-RsMLDR4+zFzZkqPB2V8bQA3M2tZ+Qz5cJQ/CiDcKzli5E6bPAVCn04uWpO9gh4hO" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/indent-fold.min.js" integrity="sha384-+bwKzIYgIYDR0T9R7zrsYjN1wC/opF9nguUk9Tb3+JwB2KpQIL9a2qLh6N8sQ4Z1" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js" integrity="sha384-tpfBJd88te3+Jg5MP14S6Qln6a3GrZWs/4ZYDpr3DZWtBIWY2WCoRM8E3aNOtH4W" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/javascript-hint.min.js" integrity="sha384-O1OZ33dbxOOO+8/2fZxNu1tr0HbOS4NY2+t7lUBQUfQSY6wInq9K5iG5n7bCYK4O" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js" integrity="sha384-SC2x9z6s7Bt7yc9wK6bB4x4F+t5mHn5d7FW2+yGrQmne0GY9L5mH0q9NMcAWuBmp" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/display/fullscreen.min.js" integrity="sha384-b7FvX0Q1xWz//+aBWqO8cFE4vbnQk6GcZeUV0bEA4cp2dE0icQykMSxP5ntu+7L4" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/search.min.js" integrity="sha384-wyJVRdx0t3R/n2yDlaN8lgIkeI3LNFr8eO1xY0cH6XvazOGTp3Mg5HALZQv7wlD4" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/searchcursor.min.js" integrity="sha384-v4nP7kzEFcD91L08nWBDf+QsrpUw2Rb8wZz9gDx1QCDn2Dcuv+80Kpkhy3zLYQ2y" crossorigin="anonymous"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/dialog/dialog.min.js" integrity="sha384-TIfK+pZIT+U4QZ7jsR1Yqq6yUdi4Uhn27Wg8lMynbYOfP6OCuHZtnm49vruQOaD4" crossorigin="anonymous"></script>
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/indent-fold.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/javascript-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
 
   <!-- xterm.js -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" integrity="sha384-+JQrmRfJXeGj7/eZbpQWWi4n+HYl6FxT01JdXm8/caOPPcAQpuqyI9F/t5ZlD3fD" crossorigin="anonymous" />
-  <script defer src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js" integrity="sha384-9Dn5XlFWr8dIKJDHhWv95KGJ0wzOWdH+J4qP/GzAqgP5Hx5/C+5O4KQaDGLZrgmJ" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js" integrity="sha384-5oYpBf2y6j6pDMzbBWVn3JNsmh2ToaBs4xPA2pBfFXp7gDA+uYLbGm51BL5kQ/3u" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.js" integrity="sha384-7oz0z8XHICxb3s8d2S7YK8+Q9Qse2rYB/vLG6Mti7N7XbPDEN4PkhS0ewPvcbixM" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.js"></script>
 
   <!-- Pyodide (loaded async) -->
-  <script async src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js" integrity="sha384-1iM0E88WQ6F2fHagI/u5pOBRr3WN+9rwhUdvFgj1/N2Lk2FQaSHH95D0pTAhJwv+" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
 
-  <!-- Markdown & Highlight -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js" integrity="sha384-5T5xGxrEa1FzN1e50OG1gDkVGfLUmwI7Y2KbAotV3/57qjBw/X07b8dm+uYUn5MZ" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-KRY3hHl/yitCvQwcz9e63dlI2pQo9bLm3Ahn6VlW0F6d3mn0uPZz7OWQbS9fq9+G" crossorigin="anonymous" />
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha384-F2dPqFR13BcX8Eb2Bl5p2A3uwF5J7GjC5/JNnHj/pHHqxwVlnQAgq+JYzZ1gw7R5" crossorigin="anonymous"></script>
-
-  <!-- Fonts & Icons -->
+  <!-- Font & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha384-9LwPkOQ6/zPFjBg8qT5sc3P0Ig9++9R2U8dT6VXj8X3PLZ//qQXw7fZsyvX5j9nD" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
-    /* ----- (Full CSS – same as before, but now complete) ----- */
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { height:100%; background:#0b0e14; font-family:'Inter',sans-serif; color:#e0e8f0; overflow:hidden; }
-    #app { display:flex; flex-direction:column; height:100vh; background:radial-gradient(ellipse at 20% 30%, rgba(20,60,140,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(120,40,100,0.06) 0%, transparent 60%), #0b0e14; }
-    #topbar { flex-shrink:0; height:48px; background:rgba(11,14,20,0.85); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; padding:0 20px; gap:16px; z-index:20; }
-    #topbar .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:18px; color:#7ae0b0; }
-    #topbar .brand i { font-size:20px; }
-    #topbar .spacer { flex:1; }
-    #topbar .status { display:flex; align-items:center; gap:16px; font-size:12px; color:#8899b0; }
-    #topbar .status .dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#4caf50; box-shadow:0 0 12px rgba(76,175,80,0.4); transition:background 0.3s; }
-    #topbar .status .dot.off { background:#555; box-shadow:none; }
-    #topbar .toggle-group { display:flex; gap:6px; }
-    #topbar .toggle-btn { background:rgba(255,255,255,0.06); border:1px solid transparent; border-radius:6px; padding:4px 10px; color:#8899b0; cursor:pointer; transition:all 0.2s; font-size:14px; }
-    #topbar .toggle-btn:hover { background:rgba(255,255,255,0.08); color:#fff; }
-    #topbar .toggle-btn.active { color:#7ae0b0; background:rgba(122,224,176,0.12); border-color:rgba(122,224,176,0.2); }
 
-    #main { display:flex; flex:1; overflow:hidden; }
-    #sidebar { width:240px; min-width:180px; background:rgba(20,26,36,0.85); backdrop-filter:blur(12px); border-right:1px solid rgba(255,255,255,0.06); padding:12px 8px; overflow-y:auto; flex-shrink:0; transition:width 0.25s ease, padding 0.25s ease; }
-    #sidebar.hidden { width:0; min-width:0; padding:0; border:none; overflow:hidden; }
-    #sidebar .section-title { font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:#8899b0; margin:0 0 8px 10px; display:flex; align-items:center; gap:8px; }
-    .tree-item { padding:4px 8px; cursor:pointer; border-radius:4px; display:flex; align-items:center; gap:6px; font-size:13px; color:#e0e8f0; transition:background 0.15s; }
+    #app {
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+      background:#0b0e14;
+    }
+
+    /* Top bar */
+    #topbar {
+      flex-shrink:0;
+      height:44px;
+      background:rgba(11,14,20,0.9);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      gap:12px;
+      z-index:10;
+    }
+    #topbar .brand { font-weight:700; font-size:16px; color:#7ae0b0; display:flex; align-items:center; gap:8px; }
+    #topbar .brand i { font-size:18px; }
+    #topbar .spacer { flex:1; }
+    #topbar .status { display:flex; align-items:center; gap:12px; font-size:12px; color:#8899b0; }
+    #topbar .status .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#4caf50; box-shadow:0 0 8px rgba(76,175,80,0.4); }
+    #topbar .status .dot.off { background:#555; box-shadow:none; }
+
+    /* Main layout */
+    #main {
+      display:flex;
+      flex:1;
+      overflow:hidden;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      width:220px;
+      min-width:160px;
+      background:rgba(20,26,36,0.85);
+      backdrop-filter:blur(8px);
+      border-right:1px solid rgba(255,255,255,0.06);
+      padding:10px 8px;
+      overflow-y:auto;
+      flex-shrink:0;
+    }
+    #sidebar .title { font-size:10px; text-transform:uppercase; letter-spacing:0.6px; color:#8899b0; margin:0 0 6px 8px; }
+    .tree-item {
+      padding:3px 8px;
+      cursor:pointer;
+      border-radius:4px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:13px;
+      color:#c8d0dc;
+      transition:background 0.15s;
+    }
     .tree-item:hover { background:rgba(255,255,255,0.05); }
     .tree-item.active { background:rgba(122,162,247,0.12); color:#7aa2f7; }
-    .tree-item .icon { width:18px; font-size:14px; opacity:0.7; text-align:center; }
+    .tree-item .icon { width:18px; text-align:center; opacity:0.7; }
     .tree-item .name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .tree-item .del-btn { background:none; border:none; color:#8899b0; cursor:pointer; opacity:0; transition:opacity 0.15s; padding:0 4px; }
-    .tree-item:hover .del-btn { opacity:1; }
-    .tree-item .del-btn:hover { color:#f28b82; }
+    .tree-item .del { background:none; border:none; color:#6a7a90; cursor:pointer; opacity:0; padding:0 4px; }
+    .tree-item:hover .del { opacity:1; }
+    .tree-item .del:hover { color:#f28b82; }
     .tree-children { padding-left:18px; }
     .folder-toggle { cursor:pointer; width:18px; text-align:center; }
-    #sidebar .action-btn { background:rgba(255,255,255,0.06); border:none; border-radius:6px; padding:6px 12px; color:#8899b0; font-family:inherit; font-size:12px; cursor:pointer; width:100%; margin-top:8px; transition:background 0.15s; display:flex; align-items:center; gap:8px; justify-content:center; }
-    #sidebar .action-btn:hover { background:rgba(255,255,255,0.08); color:#fff; }
+    #sidebar .action-btn {
+      background:rgba(255,255,255,0.06);
+      border:none;
+      border-radius:4px;
+      padding:4px 10px;
+      color:#bcc8dc;
+      font-family:inherit;
+      font-size:12px;
+      cursor:pointer;
+      width:100%;
+      margin-top:6px;
+      transition:background 0.15s;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      justify-content:center;
+    }
+    #sidebar .action-btn:hover { background:rgba(255,255,255,0.12); }
 
-    #center { flex:1; display:flex; flex-direction:column; min-width:0; background:#0b0e14; }
-    #tabs-bar { flex-shrink:0; height:32px; background:rgba(11,14,20,0.8); backdrop-filter:blur(8px); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; padding:0 8px; gap:2px; overflow-x:auto; }
-    #tabs-bar .tab { padding:4px 14px; border-radius:4px 4px 0 0; font-size:12px; color:#8899b0; cursor:pointer; display:flex; align-items:center; gap:6px; background:transparent; border-bottom:2px solid transparent; transition:all 0.15s; white-space:nowrap; }
+    /* Center panel */
+    #center {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      background:#0b0e14;
+    }
+
+    /* Tabs */
+    #tabs-bar {
+      flex-shrink:0;
+      height:30px;
+      background:rgba(11,14,20,0.8);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+      display:flex;
+      align-items:center;
+      padding:0 8px;
+      gap:2px;
+      overflow-x:auto;
+    }
+    #tabs-bar .tab {
+      padding:2px 12px;
+      border-radius:4px 4px 0 0;
+      font-size:12px;
+      color:#8899b0;
+      cursor:pointer;
+      background:transparent;
+      border-bottom:2px solid transparent;
+      transition:all 0.15s;
+      white-space:nowrap;
+    }
     #tabs-bar .tab:hover { background:rgba(255,255,255,0.04); }
     #tabs-bar .tab.active { color:#e0e8f0; border-bottom-color:#7ae0b0; background:rgba(255,255,255,0.02); }
-    #tabs-bar .tab .close-tab { background:none; border:none; color:#8899b0; cursor:pointer; padding:0 2px; border-radius:4px; font-size:12px; }
-    #tabs-bar .tab .close-tab:hover { background:rgba(255,255,255,0.1); color:#fff; }
-    #tabs-bar .tab.dirty::after { content:'●'; font-size:10px; color:#f7dc6f; margin-left:4px; }
 
-    #editor-wrapper { flex:1; position:relative; overflow:hidden; background:#0b0e14; }
-    #editor-wrapper .CodeMirror { height:100% !important; font-size:14px; font-family:'JetBrains Mono', monospace; background:#0b0e14; }
+    /* Editor wrapper */
+    #editor-wrapper {
+      flex:1;
+      position:relative;
+      overflow:hidden;
+    }
+    #editor-wrapper .CodeMirror {
+      height:100% !important;
+      font-size:14px;
+      font-family:'JetBrains Mono', monospace;
+      background:#0b0e14;
+    }
     .CodeMirror-gutters { background:#0b0e14 !important; border-right:1px solid rgba(255,255,255,0.06) !important; }
     .CodeMirror-linenumber { color:#8899b0 !important; }
 
-    #output-container { flex-shrink:0; height:220px; min-height:120px; max-height:450px; background:rgba(0,0,0,0.4); border-top:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; transition:height 0.25s ease; overflow:hidden; }
-    #output-container.hidden { height:0; min-height:0; max-height:0; border:none; }
-    #output-header { flex-shrink:0; height:30px; background:rgba(11,14,20,0.8); padding:0 12px; display:flex; align-items:center; font-size:11px; color:#8899b0; gap:12px; border-bottom:1px solid rgba(255,255,255,0.06); }
-    #output-header .tabs { display:flex; gap:6px; }
-    #output-header .tabs span { padding:2px 12px; border-radius:12px; cursor:pointer; background:rgba(255,255,255,0.06); transition:all 0.15s; font-weight:500; }
-    #output-header .tabs span:hover { background:rgba(255,255,255,0.08); }
-    #output-header .tabs span.active { background:rgba(122,162,247,0.15); color:#7aa2f7; }
-    #output-header .clear-btn { margin-left:auto; background:none; border:none; color:#8899b0; cursor:pointer; font-size:12px; }
-    #output-header .clear-btn:hover { color:#f28b82; }
-    #output-content { flex:1; display:flex; flex-direction:column; overflow:hidden; }
-    #output-text { flex:1; padding:8px 12px; overflow-y:auto; font-family:'JetBrains Mono', monospace; font-size:13px; white-space:pre-wrap; word-wrap:break-word; line-height:1.6; color:#e0e8f0; }
+    /* Output / Terminal / Preview containers */
+    .panel-container {
+      flex:1;
+      display:none;
+      overflow:hidden;
+      background:#0b0e14;
+    }
+    .panel-container.active {
+      display:flex;
+      flex-direction:column;
+    }
+    #output-text {
+      flex:1;
+      padding:8px 12px;
+      overflow-y:auto;
+      font-family:'JetBrains Mono', monospace;
+      font-size:13px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      line-height:1.6;
+      color:#c8d0dc;
+    }
     #output-text .error { color:#f28b82; }
     #output-text .success { color:#7ae0b0; }
     #output-text .info { color:#7aa2f7; }
     #output-text .warn { color:#f7dc6f; }
-    #terminal-container { flex:1; padding:4px 8px; background:transparent; overflow:hidden; display:none; }
+
+    #terminal-container {
+      flex:1;
+      padding:4px 8px;
+      background:transparent;
+      overflow:hidden;
+    }
     #terminal-container .xterm { height:100%; }
     #terminal-container .xterm-viewport { background:transparent !important; }
     #terminal-container .xterm-screen { background:transparent !important; }
     #terminal-container .xterm-cursor { background-color:#7aa2f7 !important; box-shadow:0 0 12px rgba(122,162,247,0.5); }
-    #preview-iframe { flex:1; display:none; width:100%; border:none; background:#fff; }
 
-    #chat-panel { width:380px; min-width:280px; max-width:440px; background:rgba(20,26,36,0.85); backdrop-filter:blur(12px); border-left:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; transition:width 0.25s ease, padding 0.25s ease; overflow:hidden; }
-    #chat-panel.hidden { width:0; min-width:0; max-width:0; border:none; padding:0; overflow:hidden; }
-    #chat-header { flex-shrink:0; height:40px; background:rgba(11,14,20,0.8); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; padding:0 16px; font-weight:600; font-size:14px; color:#e0e8f0; gap:10px; }
-    #chat-header i { color:#7ae0b0; }
-    #chat-header .status-badge { margin-left:auto; font-size:10px; background:rgba(122,224,176,0.15); padding:2px 12px; border-radius:12px; color:#7ae0b0; }
-    #chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; }
-    .msg { padding:10px 14px; border-radius:12px; max-width:92%; font-size:14px; line-height:1.6; word-wrap:break-word; animation:fadeIn 0.25s ease; position:relative; }
+    #preview-iframe {
+      flex:1;
+      width:100%;
+      border:none;
+      background:#fff;
+    }
+
+    /* Chat panel (right sidebar) */
+    #chat-panel {
+      width:340px;
+      min-width:260px;
+      background:rgba(20,26,36,0.85);
+      backdrop-filter:blur(8px);
+      border-left:1px solid rgba(255,255,255,0.06);
+      display:flex;
+      flex-direction:column;
+    }
+    #chat-panel .header {
+      flex-shrink:0;
+      height:36px;
+      background:rgba(11,14,20,0.8);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+      display:flex;
+      align-items:center;
+      padding:0 12px;
+      font-weight:600;
+      font-size:13px;
+      gap:8px;
+    }
+    #chat-panel .header i { color:#7ae0b0; }
+    #chat-messages {
+      flex:1;
+      overflow-y:auto;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .msg {
+      padding:8px 12px;
+      border-radius:10px;
+      max-width:90%;
+      font-size:13px;
+      line-height:1.5;
+      word-wrap:break-word;
+    }
     .msg.user { align-self:flex-end; background:rgba(122,162,247,0.15); color:#e0e8f0; border-bottom-right-radius:4px; }
-    .msg.assistant { align-self:flex-start; background:rgba(255,255,255,0.04); color:#e0e8f0; border-bottom-left-radius:4px; border:1px solid rgba(255,255,255,0.06); }
-    .msg .avatar { font-size:16px; margin-right:8px; }
-    .msg .role-label { font-size:10px; opacity:0.5; display:block; margin-bottom:4px; }
-    .msg .markdown-body { font-size:14px; line-height:1.6; }
-    .msg .markdown-body pre { background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:6px; overflow-x:auto; font-family:'JetBrains Mono', monospace; font-size:13px; }
-    .msg .markdown-body code { font-family:'JetBrains Mono', monospace; background:rgba(0,0,0,0.2); padding:2px 6px; border-radius:4px; }
-    .msg .markdown-body pre code { background:transparent; padding:0; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    .msg.assistant { align-self:flex-start; background:rgba(255,255,255,0.05); color:#e0e8f0; border-bottom-left-radius:4px; border:1px solid rgba(255,255,255,0.06); }
+    .msg .role { font-size:10px; opacity:0.5; display:block; margin-bottom:2px; }
 
-    #chat-input-area { flex-shrink:0; padding:12px 16px; border-top:1px solid rgba(255,255,255,0.06); display:flex; gap:8px; background:rgba(0,0,0,0.2); }
-    #chat-input { flex:1; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:8px 12px; color:#e0e8f0; font-family:'Inter',sans-serif; font-size:13px; outline:none; transition:border 0.2s; resize:none; min-height:36px; max-height:120px; }
+    #chat-input-area {
+      flex-shrink:0;
+      padding:8px 12px;
+      border-top:1px solid rgba(255,255,255,0.06);
+      display:flex;
+      gap:6px;
+      background:rgba(0,0,0,0.2);
+    }
+    #chat-input {
+      flex:1;
+      background:rgba(0,0,0,0.4);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:6px;
+      padding:6px 10px;
+      color:#e0e8f0;
+      font-family:inherit;
+      font-size:13px;
+      outline:none;
+      resize:none;
+      min-height:32px;
+      max-height:100px;
+    }
     #chat-input:focus { border-color:#7ae0b0; }
-    #chat-send { background:#7ae0b0; border:none; border-radius:8px; padding:0 18px; color:#0b0e14; font-weight:600; cursor:pointer; transition:background 0.2s; font-family:'Inter',sans-serif; font-size:14px; }
+    #chat-send {
+      background:#7ae0b0;
+      border:none;
+      border-radius:6px;
+      padding:0 16px;
+      color:#0b0e14;
+      font-weight:600;
+      cursor:pointer;
+    }
     #chat-send:hover { background:#5fcfa0; }
-    #chat-send:disabled { opacity:0.5; cursor:not-allowed; }
 
-    #statusbar { flex-shrink:0; height:26px; background:rgba(11,14,20,0.9); backdrop-filter:blur(8px); border-top:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; padding:0 20px; font-size:11px; color:#8899b0; gap:20px; z-index:5; }
-    #statusbar .item { display:flex; align-items:center; gap:6px; }
-    #statusbar .item i { font-size:12px; opacity:0.6; }
+    /* Status bar */
+    #statusbar {
+      flex-shrink:0;
+      height:24px;
+      background:rgba(11,14,20,0.9);
+      border-top:1px solid rgba(255,255,255,0.06);
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      font-size:11px;
+      color:#8899b0;
+      gap:16px;
+    }
     #statusbar .spacer { flex:1; }
-    #statusbar .item .highlight { color:#e0e8f0; font-weight:500; }
+    #statusbar .highlight { color:#e0e8f0; font-weight:500; }
 
-    ::-webkit-scrollbar { width:6px; height:6px; }
+    /* Responsive */
+    @media (max-width:1024px) {
+      #sidebar { width:170px; min-width:120px; }
+      #chat-panel { width:280px; min-width:200px; }
+    }
+    @media (max-width:768px) {
+      #sidebar { display:none; }
+      #chat-panel { width:100%; min-width:0; border-left:none; border-top:1px solid rgba(255,255,255,0.06); max-height:40%; }
+      #main { flex-direction:column; }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:5px; height:5px; }
     ::-webkit-scrollbar-track { background:transparent; }
     ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:10px; }
     ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
-
-    @media (max-width:1024px) { #sidebar { width:180px; min-width:140px; } #chat-panel { width:300px; min-width:220px; } }
-    @media (max-width:768px) { #sidebar { display:none; } #chat-panel { width:100%; min-width:0; border-left:none; border-top:1px solid rgba(255,255,255,0.06); max-height:45%; } #main { flex-direction:column; } #output-container { height:150px; } }
-
-    /* Custom modal for confirm/prompt */
-    .custom-modal-overlay {
-      position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:9999; animation:fadeIn 0.2s ease;
-    }
-    .custom-modal {
-      background:#1e2630; border-radius:16px; padding:24px 32px; max-width:420px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.06);
-    }
-    .custom-modal h3 { color:#e0e8f0; font-weight:600; font-size:18px; margin-bottom:8px; }
-    .custom-modal p { color:#8899b0; font-size:14px; line-height:1.5; margin-bottom:16px; }
-    .custom-modal input { width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:8px 12px; color:#e0e8f0; font-size:14px; margin-bottom:16px; outline:none; }
-    .custom-modal input:focus { border-color:#7ae0b0; }
-    .custom-modal .modal-actions { display:flex; gap:8px; justify-content:flex-end; }
-    .custom-modal .modal-actions button { padding:6px 16px; border-radius:8px; border:none; font-weight:500; cursor:pointer; transition:background 0.2s; }
-    .custom-modal .modal-actions .btn-primary { background:#7ae0b0; color:#0b0e14; }
-    .custom-modal .modal-actions .btn-primary:hover { background:#5fcfa0; }
-    .custom-modal .modal-actions .btn-secondary { background:rgba(255,255,255,0.06); color:#8899b0; }
-    .custom-modal .modal-actions .btn-secondary:hover { background:rgba(255,255,255,0.12); }
   </style>
 </head>
 <body>
@@ -187,15 +341,9 @@
   <div id="topbar">
     <div class="brand"><i class="fas fa-cube"></i>Sandbox</div>
     <div class="spacer"></div>
-    <div class="toggle-group">
-      <button class="toggle-btn" id="toggle-sidebar" aria-label="Toggle sidebar"><i class="fas fa-folder"></i></button>
-      <button class="toggle-btn" id="toggle-output" aria-label="Toggle output"><i class="fas fa-terminal"></i></button>
-      <button class="toggle-btn" id="toggle-chat" aria-label="Toggle chat"><i class="fas fa-comment"></i></button>
-      <button class="toggle-btn" id="toggle-maximize" aria-label="Maximize editor"><i class="fas fa-expand"></i></button>
-    </div>
     <div class="status">
-      <span><span class="dot" id="status-dot"></span> <span id="status-text">Pyodide</span></span>
-      <span><i class="fas fa-robot"></i> <span id="ai-status">AI ready</span></span>
+      <span><span class="dot" id="statusDot"></span> <span id="statusText">Ready</span></span>
+      <span><i class="fas fa-robot"></i> AI online</span>
     </div>
   </div>
 
@@ -203,54 +351,55 @@
   <div id="main">
     <!-- Sidebar -->
     <div id="sidebar">
-      <div class="section-title"><i class="fas fa-folder-open"></i> Explorer</div>
-      <div id="file-tree" role="tree" aria-label="File explorer"></div>
-      <button class="action-btn" id="new-file-btn"><i class="fas fa-plus"></i> New File</button>
-      <button class="action-btn" id="new-folder-btn" style="margin-top:4px;"><i class="fas fa-folder-plus"></i> New Folder</button>
+      <div class="title"><i class="fas fa-folder-open"></i> Explorer</div>
+      <div id="fileTree"></div>
+      <button class="action-btn" id="newFileBtn"><i class="fas fa-plus"></i> New File</button>
+      <button class="action-btn" id="newFolderBtn" style="margin-top:4px;"><i class="fas fa-folder-plus"></i> New Folder</button>
     </div>
 
     <!-- Center -->
     <div id="center">
-      <div id="tabs-bar" role="tablist" aria-label="Open files"></div>
-      <div id="editor-wrapper"><textarea id="editor-textarea"></textarea></div>
-      <div id="output-container">
-        <div id="output-header">
-          <div class="tabs" role="tablist">
-            <span role="tab" aria-selected="true" data-tab="output">Output</span>
-            <span role="tab" aria-selected="false" data-tab="terminal">Terminal</span>
-            <span role="tab" aria-selected="false" data-tab="preview">Preview</span>
-          </div>
-          <button class="clear-btn" id="clear-output" aria-label="Clear output"><i class="fas fa-times"></i> Clear</button>
-        </div>
-        <div id="output-content" role="log" aria-live="polite" aria-atomic="false">
-          <div id="output-text"></div>
-          <div id="terminal-container"></div>
-          <iframe id="preview-iframe" sandbox="allow-scripts allow-modals allow-same-origin"></iframe>
+      <!-- Main tabs -->
+      <div id="tabs-bar">
+        <span class="tab active" data-tab="editor">Editor</span>
+        <span class="tab" data-tab="output">Output</span>
+        <span class="tab" data-tab="terminal">Terminal</span>
+        <span class="tab" data-tab="preview">Preview</span>
+        <span class="tab" data-tab="chat">Chat</span>
+        <span style="flex:1;"></span>
+        <span style="font-size:11px; color:#8899b0; margin-right:8px;" id="fileInfo">main.py</span>
+      </div>
+
+      <!-- Panels -->
+      <div id="editor-wrapper" class="panel-container active">
+        <textarea id="editorTextarea"></textarea>
+      </div>
+      <div id="output-container" class="panel-container">
+        <div id="output-text"></div>
+      </div>
+      <div id="terminal-container" class="panel-container"></div>
+      <div id="preview-container" class="panel-container">
+        <iframe id="preview-iframe"></iframe>
+      </div>
+      <div id="chat-container" class="panel-container">
+        <div style="flex:1; padding:12px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;" id="chatMessages"></div>
+        <div style="flex-shrink:0; padding:8px 12px; border-top:1px solid rgba(255,255,255,0.06); display:flex; gap:6px; background:rgba(0,0,0,0.2);">
+          <textarea id="chatInput" rows="1" placeholder="Ask something..." style="flex:1; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.06); border-radius:6px; padding:6px 10px; color:#e0e8f0; font-family:inherit; font-size:13px; outline:none; resize:none; min-height:32px; max-height:100px;"></textarea>
+          <button id="chatSend" style="background:#7ae0b0; border:none; border-radius:6px; padding:0 16px; color:#0b0e14; font-weight:600; cursor:pointer;">Send</button>
         </div>
       </div>
     </div>
 
-    <!-- Chat -->
-    <div id="chat-panel">
-      <div id="chat-header">
-        <i class="fas fa-comment-dots"></i> DeepSeek AI
-        <span class="status-badge"><i class="fas fa-circle" style="font-size:8px; color:#7ae0b0; margin-right:4px;"></i> free</span>
-      </div>
-      <div id="chat-messages" role="log" aria-live="polite" aria-atomic="false"></div>
-      <div id="chat-input-area">
-        <textarea id="chat-input" rows="1" placeholder="Ask for help..."></textarea>
-        <button id="chat-send" aria-label="Send message"><i class="fas fa-arrow-right"></i></button>
-      </div>
-    </div>
+    <!-- Chat panel (right sidebar) - we've integrated chat into main tabs, so we can remove this, but keep for toggle? Actually we'll use tab, so we don't need separate panel. Remove. -->
   </div>
 
   <!-- Status Bar -->
   <div id="statusbar">
-    <div class="item"><i class="fas fa-code"></i> <span class="highlight">Python</span></div>
-    <div class="item"><i class="fas fa-file"></i> <span id="status-file">(none)</span></div>
-    <div class="spacer"></div>
-    <div class="item"><i class="fas fa-robot"></i> DeepSeek v4-pro</div>
-    <div class="item"><span id="status-cursor">Ln 1, Col 1</span></div>
+    <span><i class="fas fa-code"></i> <span class="highlight">Python</span></span>
+    <span><i class="fas fa-file"></i> <span id="statusFile">main.py</span></span>
+    <span class="spacer"></span>
+    <span><i class="fas fa-robot"></i> DeepSeek v4-pro</span>
+    <span id="statusCursor">Ln 1, Col 1</span>
   </div>
 </div>
 
@@ -262,28 +411,19 @@
     const PROXY_URL = 'https://battleground-deepseektoken.up.railway.app/api/chat';
 
     // ─── DOM REFS ──────────────────────────────────────────────────────
-    const fileTreeEl = document.getElementById('file-tree');
-    const tabsBar = document.getElementById('tabs-bar');
-    const editorTextarea = document.getElementById('editor-textarea');
+    const fileTreeEl = document.getElementById('fileTree');
+    const editorTextarea = document.getElementById('editorTextarea');
     const outputText = document.getElementById('output-text');
     const terminalContainer = document.getElementById('terminal-container');
     const previewIframe = document.getElementById('preview-iframe');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
-    const chatSend = document.getElementById('chat-send');
-    const statusDot = document.getElementById('status-dot');
-    const statusText = document.getElementById('status-text');
-    const statusFile = document.getElementById('status-file');
-    const statusCursor = document.getElementById('status-cursor');
-
-    // ─── PANEL ELEMENTS ──────────────────────────────────────────────
-    const sidebar = document.getElementById('sidebar');
-    const outputContainer = document.getElementById('output-container');
-    const chatPanel = document.getElementById('chat-panel');
-    const toggleSidebarBtn = document.getElementById('toggle-sidebar');
-    const toggleOutputBtn = document.getElementById('toggle-output');
-    const toggleChatBtn = document.getElementById('toggle-chat');
-    const toggleMaximizeBtn = document.getElementById('toggle-maximize');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const chatSend = document.getElementById('chatSend');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const statusFile = document.getElementById('statusFile');
+    const statusCursor = document.getElementById('statusCursor');
+    const fileInfo = document.getElementById('fileInfo');
 
     // ─── STATE ────────────────────────────────────────────────────────
     let editor = null;
@@ -295,7 +435,6 @@
     let isRunning = false;
     let conversation = [];
     let isChatProcessing = false;
-    let dirty = false;
 
     // Terminal
     let terminal = null;
@@ -306,108 +445,10 @@
     let terminalHistoryIndex = 0;
     let terminalInputBuffer = '';
 
-    // Layout
-    const LAYOUT_KEY = 'sandbox_layout_pro';
-    let layoutState = {
-      sidebarHidden: false,
-      outputHidden: false,
-      chatHidden: false,
-      maximized: false,
-    };
-
-    // ─── CUSTOM MODAL (replaces confirm/alert) ──────────────────────
-    function showModal({ title, message, input = false, inputPlaceholder = '', confirmText = 'OK', cancelText = 'Cancel' }) {
-      return new Promise((resolve) => {
-        const overlay = document.createElement('div');
-        overlay.className = 'custom-modal-overlay';
-        overlay.innerHTML = `
-          <div class="custom-modal">
-            <h3>${title}</h3>
-            <p>${message}</p>
-            ${input ? `<input type="text" placeholder="${inputPlaceholder}" id="modal-input" />` : ''}
-            <div class="modal-actions">
-              ${cancelText ? `<button class="btn-secondary" id="modal-cancel">${cancelText}</button>` : ''}
-              <button class="btn-primary" id="modal-confirm">${confirmText}</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(overlay);
-        const inputEl = overlay.querySelector('#modal-input');
-        if (inputEl) inputEl.focus();
-        const confirmBtn = overlay.querySelector('#modal-confirm');
-        const cancelBtn = overlay.querySelector('#modal-cancel');
-        const resolveAndRemove = (value) => {
-          overlay.remove();
-          resolve(value);
-        };
-        confirmBtn.addEventListener('click', () => {
-          resolveAndRemove(inputEl ? inputEl.value : true);
-        });
-        if (cancelBtn) cancelBtn.addEventListener('click', () => resolveAndRemove(inputEl ? null : false));
-        if (inputEl) inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmBtn.click(); });
-        overlay.addEventListener('click', (e) => {
-          if (e.target === overlay) resolveAndRemove(inputEl ? null : false);
-        });
-      });
-    }
-
-    // ─── LAYOUT PERSISTENCE ──────────────────────────────────────────
-    function loadLayout() {
-      try {
-        const saved = localStorage.getItem(LAYOUT_KEY);
-        if (saved) layoutState = JSON.parse(saved);
-      } catch (_) {}
-    }
-    function saveLayout() {
-      localStorage.setItem(LAYOUT_KEY, JSON.stringify(layoutState));
-    }
-    function applyLayout() {
-      sidebar.classList.toggle('hidden', layoutState.sidebarHidden);
-      outputContainer.classList.toggle('hidden', layoutState.outputHidden);
-      chatPanel.classList.toggle('hidden', layoutState.chatHidden);
-      toggleSidebarBtn.classList.toggle('active', !layoutState.sidebarHidden);
-      toggleOutputBtn.classList.toggle('active', !layoutState.outputHidden);
-      toggleChatBtn.classList.toggle('active', !layoutState.chatHidden);
-      if (layoutState.maximized) {
-        sidebar.classList.add('hidden');
-        outputContainer.classList.add('hidden');
-        chatPanel.classList.add('hidden');
-        toggleMaximizeBtn.classList.add('active');
-        toggleMaximizeBtn.innerHTML = '<i class="fas fa-compress"></i>';
-      } else {
-        sidebar.classList.toggle('hidden', layoutState.sidebarHidden);
-        outputContainer.classList.toggle('hidden', layoutState.outputHidden);
-        chatPanel.classList.toggle('hidden', layoutState.chatHidden);
-        toggleMaximizeBtn.classList.remove('active');
-        toggleMaximizeBtn.innerHTML = '<i class="fas fa-expand"></i>';
-      }
-    }
-    function togglePanel(panel) {
-      if (layoutState.maximized) layoutState.maximized = false;
-      if (panel === 'sidebar') layoutState.sidebarHidden = !layoutState.sidebarHidden;
-      else if (panel === 'output') layoutState.outputHidden = !layoutState.outputHidden;
-      else if (panel === 'chat') layoutState.chatHidden = !layoutState.chatHidden;
-      layoutState.maximized = false;
-      saveLayout();
-      applyLayout();
-    }
-    function toggleMaximize() {
-      layoutState.maximized = !layoutState.maximized;
-      saveLayout();
-      applyLayout();
-      if (layoutState.maximized) {
-        toggleMaximizeBtn.innerHTML = '<i class="fas fa-compress"></i>';
-        toggleMaximizeBtn.classList.add('active');
-      } else {
-        toggleMaximizeBtn.innerHTML = '<i class="fas fa-expand"></i>';
-        toggleMaximizeBtn.classList.remove('active');
-      }
-    }
-
-    // ─── FILE SYSTEM PERSISTENCE ────────────────────────────────────
+    // ─── PERSISTENCE ──────────────────────────────────────────────────
     function loadState() {
       try {
-        const fs = localStorage.getItem('sandbox_fs_pro');
+        const fs = localStorage.getItem('sandbox_fs');
         if (fs) {
           const parsed = JSON.parse(fs);
           filesystem = parsed.files || {};
@@ -417,9 +458,9 @@
           filesystem['/index.html'] = '<h1>Hello</h1>';
           folderStructure['/'] = { type: 'folder', children: { 'main.py': true, 'index.html': true } };
         }
-        const conv = localStorage.getItem('sandbox_chat_pro');
+        const conv = localStorage.getItem('sandbox_chat');
         if (conv) conversation = JSON.parse(conv);
-        const tabs = localStorage.getItem('sandbox_tabs_pro');
+        const tabs = localStorage.getItem('sandbox_tabs');
         if (tabs) {
           const parsedTabs = JSON.parse(tabs);
           openTabs = parsedTabs.tabs || [];
@@ -431,9 +472,9 @@
       } catch (_) {}
     }
     function saveState() {
-      localStorage.setItem('sandbox_fs_pro', JSON.stringify({ files: filesystem, folders: folderStructure }));
-      localStorage.setItem('sandbox_chat_pro', JSON.stringify(conversation));
-      localStorage.setItem('sandbox_tabs_pro', JSON.stringify({ tabs: openTabs, active: activeTabIndex }));
+      localStorage.setItem('sandbox_fs', JSON.stringify({ files: filesystem, folders: folderStructure }));
+      localStorage.setItem('sandbox_chat', JSON.stringify(conversation));
+      localStorage.setItem('sandbox_tabs', JSON.stringify({ tabs: openTabs, active: activeTabIndex }));
     }
 
     // ─── FILE TREE RENDER ────────────────────────────────────────────
@@ -485,13 +526,13 @@
           item.innerHTML = `
             <span class="icon"><i class="${icon}"></i></span>
             <span class="name">${path.split('/').pop()}</span>
-            <button class="del-btn" data-path="${path}" aria-label="Delete ${path}"><i class="fas fa-times"></i></button>
+            <button class="del" data-path="${path}"><i class="fas fa-times"></i></button>
           `;
           item.addEventListener('click', (e) => {
-            if (e.target.closest('.del-btn')) return;
+            if (e.target.closest('.del')) return;
             openFile(path);
           });
-          const del = item.querySelector('.del-btn');
+          const del = item.querySelector('.del');
           if (del) {
             del.addEventListener('click', (e) => {
               e.stopPropagation();
@@ -511,10 +552,6 @@
     }
 
     // ─── FILE OPERATIONS ─────────────────────────────────────────────
-    function sanitizeFilename(name) {
-      return name.replace(/[^a-zA-Z0-9_.-]/g, '_').slice(0, 100);
-    }
-
     function openFile(path, createIfMissing = true) {
       if (createIfMissing && !filesystem[path]) {
         const parts = path.split('/').filter(p => p);
@@ -546,8 +583,6 @@
       renderTree();
       const content = filesystem[path] || '';
       editor.setValue(content);
-      dirty = false;
-      updateDirtyIndicator();
       const ext = path.split('.').pop();
       let mode = 'python';
       if (ext === 'js') mode = 'javascript';
@@ -556,6 +591,7 @@
       else if (ext === 'json') mode = 'javascript';
       editor.setOption('mode', mode);
       statusFile.textContent = path;
+      fileInfo.textContent = path;
       currentTerminalDir = path.substring(0, path.lastIndexOf('/')) || '/';
       saveState();
       updateCursorStatus();
@@ -566,44 +602,32 @@
       const path = openTabs[activeTabIndex];
       if (!path) return;
       filesystem[path] = editor.getValue();
-      dirty = false;
-      updateDirtyIndicator();
       saveState();
-      const btn = document.getElementById('save-btn');
-      if (btn) btn.style.color = '#7ae0b0';
-      setTimeout(() => { if (btn) btn.style.color = ''; }, 300);
     }
 
     function deleteFile(path) {
-      showModal({
-        title: 'Delete File',
-        message: `Are you sure you want to delete "${path}"?`,
-        confirmText: 'Delete',
-        cancelText: 'Cancel'
-      }).then((confirmed) => {
-        if (!confirmed) return;
-        delete filesystem[path];
-        const parts = path.split('/').filter(p => p);
-        const parentPath = parts.slice(0, -1).join('/') || '/';
-        const name = parts[parts.length-1];
-        if (folderStructure[parentPath] && folderStructure[parentPath].children) {
-          delete folderStructure[parentPath].children[name];
-        }
-        const idx = openTabs.indexOf(path);
-        if (idx !== -1) {
-          openTabs.splice(idx, 1);
-          if (activeTabIndex >= openTabs.length) activeTabIndex = openTabs.length - 1;
-          if (activeTabIndex < 0) activeTabIndex = 0;
-        }
-        if (openTabs.length === 0) {
-          createFile('/main.py', 'print("Hello, World!")');
-        } else {
-          openFile(openTabs[activeTabIndex], false);
-        }
-        saveState();
-        renderTree();
-        renderTabs();
-      });
+      if (!confirm(`Delete "${path}"?`)) return;
+      delete filesystem[path];
+      const parts = path.split('/').filter(p => p);
+      const parentPath = parts.slice(0, -1).join('/') || '/';
+      const name = parts[parts.length-1];
+      if (folderStructure[parentPath] && folderStructure[parentPath].children) {
+        delete folderStructure[parentPath].children[name];
+      }
+      const idx = openTabs.indexOf(path);
+      if (idx !== -1) {
+        openTabs.splice(idx, 1);
+        if (activeTabIndex >= openTabs.length) activeTabIndex = openTabs.length - 1;
+        if (activeTabIndex < 0) activeTabIndex = 0;
+      }
+      if (openTabs.length === 0) {
+        createFile('/main.py', 'print("Hello, World!")');
+      } else {
+        openFile(openTabs[activeTabIndex], false);
+      }
+      saveState();
+      renderTree();
+      renderTabs();
     }
 
     function createFile(path, content = '') {
@@ -657,47 +681,14 @@
 
     // ─── TABS RENDER ──────────────────────────────────────────────────
     function renderTabs() {
-      tabsBar.innerHTML = '';
-      openTabs.forEach((path, index) => {
-        const tab = document.createElement('div');
-        tab.className = 'tab' + (index === activeTabIndex ? ' active' : '');
-        if (dirty && index === activeTabIndex) tab.classList.add('dirty');
-        const name = path.split('/').pop();
-        tab.innerHTML = `
-          <span>${name}</span>
-          <button class="close-tab" data-index="${index}" aria-label="Close ${name}"><i class="fas fa-times"></i></button>
-        `;
-        tab.addEventListener('click', (e) => {
-          if (e.target.closest('.close-tab')) return;
-          activeTabIndex = index;
-          openFile(openTabs[activeTabIndex], false);
-        });
-        const closeBtn = tab.querySelector('.close-tab');
-        closeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const idx = parseInt(closeBtn.dataset.index);
-          if (openTabs.length === 1) {
-            showModal({ title: 'Cannot close', message: 'Cannot close the last tab.', confirmText: 'OK', cancelText: null });
-            return;
-          }
-          openTabs.splice(idx, 1);
-          if (activeTabIndex >= openTabs.length) activeTabIndex = openTabs.length - 1;
-          if (activeTabIndex < 0) activeTabIndex = 0;
-          saveState();
-          openFile(openTabs[activeTabIndex], false);
-          renderTabs();
-          renderTree();
-        });
-        tabsBar.appendChild(tab);
-      });
-    }
-
-    function updateDirtyIndicator() {
-      document.querySelectorAll('.tab').forEach((tab, index) => {
-        if (index === activeTabIndex) {
-          tab.classList.toggle('dirty', dirty);
-        }
-      });
+      const bar = document.getElementById('tabs-bar');
+      // Keep the tabs for panels, but we also have file tabs? We'll use the main tabs for panels, not for files. We'll just show file name in status.
+      // Actually we don't need file tabs, we have a single editor. So we just show current file.
+      // We'll not add extra tabs to avoid clutter.
+      // The main tabs are for switching views (Editor, Output, Terminal, Preview, Chat).
+      // So we don't need dynamic file tabs.
+      // Instead, we show the current filename in status bar.
+      // We'll keep this function just to update the active state on tree.
     }
 
     // ─── EDITOR INIT ──────────────────────────────────────────────────
@@ -723,19 +714,16 @@
           'Ctrl-Space': 'autocomplete',
           'Shift-9': function(cm) { cm.replaceSelection('('); },
           'Shift-0': function(cm) { cm.replaceSelection(')'); },
-          'Ctrl-P': function() { alert('Search coming soon'); },
-          'Cmd-P': function() { alert('Search coming soon'); },
         }
       });
       editor.on('cursorActivity', updateCursorStatus);
       editor.on('change', () => {
         if (openTabs.length > 0) {
-          dirty = true;
-          updateDirtyIndicator();
           clearTimeout(window._autoSaveTimer);
           window._autoSaveTimer = setTimeout(saveCurrentFile, 800);
         }
       });
+      // Load first file
       if (openTabs.length === 0) {
         const keys = Object.keys(filesystem);
         if (keys.length > 0) {
@@ -746,7 +734,6 @@
         }
       }
       openFile(openTabs[activeTabIndex], false);
-      renderTabs();
       renderTree();
     }
 
@@ -759,8 +746,7 @@
     // ─── PYODIDE INIT ──────────────────────────────────────────────────
     async function initPyodide() {
       statusText.textContent = 'Loading Pyodide...';
-      statusDot.classList.remove('on');
-      statusDot.classList.add('off');
+      statusDot.className = 'dot off';
       try {
         pyodide = await loadPyodide({
           indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.1/full/'
@@ -771,15 +757,13 @@
           matplotlib.use('module://matplotlib_pyodide.html5_canvas_backend')
           import matplotlib.pyplot as plt
         `);
-        statusText.textContent = 'Pyodide ready';
-        statusDot.classList.remove('off');
-        statusDot.classList.add('on');
-        appendOutput('Pyodide loaded successfully!\n', 'success');
+        statusText.textContent = 'Ready';
+        statusDot.className = 'dot';
+        appendOutput('Pyodide loaded.\n', 'success');
       } catch (err) {
         statusText.textContent = 'Error';
-        statusDot.classList.remove('on');
-        statusDot.classList.add('off');
-        appendOutput(`Failed to load Pyodide: ${err.message}\n`, 'error');
+        statusDot.className = 'dot off';
+        appendOutput('Failed to load Pyodide: ' + err.message + '\n', 'error');
       }
     }
 
@@ -998,15 +982,8 @@
       }
 
       if (command === 'help') {
-        terminal.writeln('\x1b[36mAvailable commands:\x1b[0m');
-        terminal.writeln('  ls                  List files');
-        terminal.writeln('  cd <dir>            Change directory');
-        terminal.writeln('  cat <file>          Show file contents');
-        terminal.writeln('  run <file>          Run Python/JS/HTML file');
-        terminal.writeln('  python <file>       Run Python file');
-        terminal.writeln('  node <file>         Run JS file');
-        terminal.writeln('  clear               Clear terminal');
-        terminal.writeln('  help                Show this help');
+        terminal.writeln('\x1b[36mCommands:\x1b[0m');
+        terminal.writeln('  ls, cd, cat, run <file>, python <file>, node <file>, clear, help');
         writeTerminalPrompt();
         return;
       }
@@ -1027,7 +1004,6 @@
         return;
       }
       isRunning = true;
-      document.getElementById('run-btn').disabled = true;
       appendOutput(`\n--- Running ${filePath} ---\n`, 'info');
 
       const captureCode = `
@@ -1055,19 +1031,16 @@ finally:
         } else {
           appendOutput('(no output)\n', 'info');
         }
-        appendOutput(`--- End of output ---\n`, 'info');
+        appendOutput(`--- End ---\n`, 'info');
         isRunning = false;
-        document.getElementById('run-btn').disabled = false;
       }).catch(err => {
         const errMsg = err.message || String(err);
         if (errMsg.includes('ModuleNotFoundError') || errMsg.includes('No module named')) {
           const match = errMsg.match(/No module named ['"]([^'"]+)['"]/);
           if (match) {
             const moduleName = match[1];
-            appendOutput(`[WARNING] Library '${moduleName}' is not installed.\n`, 'warn');
-            appendOutput(`To install it, add this to your code:\n`, 'warn');
-            appendOutput(`import micropip\nawait micropip.install('${moduleName}')\n`, 'info');
-            appendOutput(`Then import it after installation.\n`, 'warn');
+            appendOutput(`[WARNING] Library '${moduleName}' not installed.\n`, 'warn');
+            appendOutput(`To install: import micropip; await micropip.install('${moduleName}')\n`, 'info');
           } else {
             appendOutput(`Error: ${errMsg}\n`, 'error');
           }
@@ -1075,7 +1048,6 @@ finally:
           appendOutput(`Error: ${errMsg}\n`, 'error');
         }
         isRunning = false;
-        document.getElementById('run-btn').disabled = false;
       });
     }
 
@@ -1111,7 +1083,7 @@ finally:
       document.body.removeChild(iframe);
       appendOutput(`\n--- Running ${filePath} ---\n`, 'info');
       appendOutput(output.trim() || '(no output)\n', '');
-      appendOutput(`--- End of output ---\n`, 'info');
+      appendOutput(`--- End ---\n`, 'info');
     }
 
     function runHTML(filePath) {
@@ -1120,7 +1092,7 @@ finally:
         appendOutput('No content to preview.\n', 'info');
         return;
       }
-      showPreviewTab();
+      showTab('preview');
       previewIframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
       appendOutput(`\n--- Previewing ${filePath} ---\n`, 'info');
     }
@@ -1137,61 +1109,34 @@ finally:
     }
 
     // ─── TAB SWITCHING ──────────────────────────────────────────────
-    function showOutputTab() {
-      outputText.style.display = '';
-      terminalContainer.style.display = 'none';
-      previewIframe.style.display = 'none';
-      document.querySelectorAll('.tabs span').forEach(t => {
-        t.setAttribute('aria-selected', 'false');
-        t.classList.remove('active');
-      });
-      const tab = document.querySelector('.tabs span[data-tab="output"]');
-      if (tab) { tab.setAttribute('aria-selected', 'true'); tab.classList.add('active'); }
-    }
-    function showTerminalTab() {
-      outputText.style.display = 'none';
-      terminalContainer.style.display = '';
-      previewIframe.style.display = 'none';
-      document.querySelectorAll('.tabs span').forEach(t => {
-        t.setAttribute('aria-selected', 'false');
-        t.classList.remove('active');
-      });
-      const tab = document.querySelector('.tabs span[data-tab="terminal"]');
-      if (tab) { tab.setAttribute('aria-selected', 'true'); tab.classList.add('active'); }
-      if (terminalReady) fitAddon.fit();
-    }
-    function showPreviewTab() {
-      outputText.style.display = 'none';
-      terminalContainer.style.display = 'none';
-      previewIframe.style.display = '';
-      document.querySelectorAll('.tabs span').forEach(t => {
-        t.setAttribute('aria-selected', 'false');
-        t.classList.remove('active');
-      });
-      const tab = document.querySelector('.tabs span[data-tab="preview"]');
-      if (tab) { tab.setAttribute('aria-selected', 'true'); tab.classList.add('active'); }
-    }
+    function showTab(tabName) {
+      document.querySelectorAll('.panel-container').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('#tabs-bar .tab').forEach(el => el.classList.remove('active'));
 
-    // ─── CHAT (with AbortController and timeout) ──────────────────
-    async function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
-      const controller = new AbortController();
-      options.signal = controller.signal;
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const res = await fetch(url, options);
-        clearTimeout(timer);
-        return res;
-      } catch (err) {
-        clearTimeout(timer);
-        throw err;
+      const panelMap = {
+        'editor': 'editor-wrapper',
+        'output': 'output-container',
+        'terminal': 'terminal-container',
+        'preview': 'preview-container',
+        'chat': 'chat-container'
+      };
+      const panel = document.getElementById(panelMap[tabName]);
+      if (panel) panel.classList.add('active');
+
+      const tab = document.querySelector(`#tabs-bar .tab[data-tab="${tabName}"]`);
+      if (tab) tab.classList.add('active');
+
+      if (tabName === 'terminal' && terminalReady) {
+        setTimeout(() => fitAddon.fit(), 50);
       }
     }
 
+    // ─── CHAT ──────────────────────────────────────────────────────────
     async function sendChatMessage(userMessage) {
       if (isChatProcessing) return;
       if (!userMessage.trim()) return;
 
-      addMessage('user', userMessage);
+      addChatMessage('user', userMessage);
       chatInput.value = '';
       chatInput.style.height = 'auto';
 
@@ -1201,21 +1146,25 @@ finally:
       isChatProcessing = true;
       chatSend.disabled = true;
 
-      const systemPrompt = 'You are an expert developer and coding assistant. Help users write, debug, and understand code in any language. Provide clear explanations and code examples. Be concise but thorough.';
+      const systemPrompt = 'You are an expert developer and coding assistant. Help users write, debug, and understand code. Provide clear explanations and code examples.';
       const messages = [ { role: 'system', content: systemPrompt }, ...conversation ];
 
       try {
-        const response = await fetchWithTimeout(PROXY_URL, {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
+        const response = await fetch(PROXY_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             messages,
             model: 'deepseek-v4-pro',
-            stream: true,
+            stream: false,  // non-streaming for simplicity
             temperature: 0.7,
             reasoning_effort: 'medium'
-          })
-        }, 30000);
+          }),
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
 
         if (!response.ok) {
           let errMsg = `HTTP ${response.status}`;
@@ -1223,70 +1172,17 @@ finally:
           throw new Error(errMsg);
         }
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullContent = '';
-        let buffer = '';
-
-        const assistantMsg = addMessage('assistant', '', true);
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          buffer += chunk;
-          // SSE lines: split by \n, keep incomplete line
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-          for (const line of lines) {
-            if (line.trim() === '') continue;
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') continue;
-              try {
-                const parsed = JSON.parse(data);
-                const delta = parsed.choices[0].delta;
-                if (delta.content) {
-                  fullContent += delta.content;
-                  const contentSpan = assistantMsg.querySelector('.msg-content');
-                  if (contentSpan) {
-                    contentSpan.innerHTML = marked.parse(fullContent);
-                    contentSpan.querySelectorAll('pre code').forEach(block => {
-                      hljs.highlightElement(block);
-                    });
-                  }
-                  chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-              } catch (_) {
-                // If parsing fails, treat as raw text (fallback)
-                if (data && data !== '[DONE]') {
-                  fullContent += data;
-                  const contentSpan = assistantMsg.querySelector('.msg-content');
-                  if (contentSpan) {
-                    contentSpan.innerHTML = marked.parse(fullContent);
-                    contentSpan.querySelectorAll('pre code').forEach(block => {
-                      hljs.highlightElement(block);
-                    });
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        if (fullContent) {
-          conversation.push({ role: 'assistant', content: fullContent });
-          saveState();
-        } else {
-          const contentSpan = assistantMsg.querySelector('.msg-content');
-          if (contentSpan) contentSpan.textContent = 'Sorry, I got an empty response.';
-        }
+        const data = await response.json();
+        const reply = data.choices?.[0]?.message?.content || 'No response content.';
+        addChatMessage('assistant', reply);
+        conversation.push({ role: 'assistant', content: reply });
+        saveState();
 
       } catch (err) {
         if (err.name === 'AbortError') {
-          addMessage('assistant', 'The request timed out. Please try again.');
+          addChatMessage('assistant', 'Request timed out. Please try again.');
         } else {
-          addMessage('assistant', `Error: ${err.message}`);
+          addChatMessage('assistant', `Error: ${err.message}`);
         }
       } finally {
         isChatProcessing = false;
@@ -1295,36 +1191,18 @@ finally:
       }
     }
 
-    function addMessage(role, content, placeholder = false) {
+    function addChatMessage(role, content) {
       const div = document.createElement('div');
       div.className = `msg ${role}`;
-      const avatar = document.createElement('span');
-      avatar.className = 'avatar';
-      avatar.textContent = role === 'user' ? '🧑‍💻' : '🤖';
-      div.appendChild(avatar);
-
       const label = document.createElement('span');
-      label.className = 'role-label';
+      label.className = 'role';
       label.textContent = role === 'user' ? 'You' : 'Assistant';
       div.appendChild(label);
-
-      const contentSpan = document.createElement('span');
-      contentSpan.className = 'msg-content';
-      if (role === 'assistant' && !placeholder) {
-        contentSpan.innerHTML = marked.parse(content);
-        contentSpan.querySelectorAll('pre code').forEach(block => {
-          hljs.highlightElement(block);
-        });
-      } else {
-        contentSpan.textContent = content;
-      }
-      div.appendChild(contentSpan);
-
+      const text = document.createElement('span');
+      text.textContent = content;
+      div.appendChild(text);
       chatMessages.appendChild(div);
       chatMessages.scrollTop = chatMessages.scrollHeight;
-      if (!placeholder) return div;
-      div._contentSpan = contentSpan;
-      return div;
     }
 
     async function explainCode() {
@@ -1343,97 +1221,56 @@ finally:
     // ─── INIT ──────────────────────────────────────────────────────────
     function init() {
       loadState();
-      loadLayout();
       initEditor();
-      applyLayout();
 
-      // Panel toggles
-      toggleSidebarBtn.addEventListener('click', () => togglePanel('sidebar'));
-      toggleOutputBtn.addEventListener('click', () => togglePanel('output'));
-      toggleChatBtn.addEventListener('click', () => togglePanel('chat'));
-      toggleMaximizeBtn.addEventListener('click', toggleMaximize);
-
-      // Editor toolbar (inject if missing)
-      const toolbar = document.getElementById('editor-toolbar');
-      if (!toolbar) {
-        const newToolbar = document.createElement('div');
-        newToolbar.id = 'editor-toolbar';
-        newToolbar.style.cssText = 'flex-shrink:0; height:36px; background:rgba(11,14,20,0.8); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; padding:0 12px; gap:12px;';
-        newToolbar.innerHTML = `
-          <div class="label">File: <span id="current-file-label">${openTabs[activeTabIndex] || '(none)'}</span></div>
-          <div class="spacer" style="flex:1;"></div>
-          <button id="save-btn"><i class="fas fa-save"></i> Save</button>
-          <button class="run" id="run-btn"><i class="fas fa-play"></i> Run</button>
-          <button class="explain" id="explain-btn"><i class="fas fa-comment"></i> Explain</button>
-        `;
-        document.getElementById('center').insertBefore(newToolbar, document.getElementById('editor-wrapper'));
-      }
-
-      document.getElementById('save-btn')?.addEventListener('click', saveCurrentFile);
-      document.getElementById('run-btn')?.addEventListener('click', runCode);
-      document.getElementById('explain-btn')?.addEventListener('click', explainCode);
-
-      // New file/folder
-      document.getElementById('new-file-btn').addEventListener('click', async () => {
-        const result = await showModal({
-          title: 'New File',
-          message: 'Enter file path (e.g., /src/app.js)',
-          input: true,
-          inputPlaceholder: '/path/to/file.py',
-          confirmText: 'Create',
-          cancelText: 'Cancel'
-        });
-        if (result) {
-          const rawPath = result.trim();
-          if (!rawPath) return;
-          const path = rawPath.startsWith('/') ? rawPath : '/' + rawPath;
-          const sanitized = sanitizeFilename(path);
-          if (filesystem[sanitized] !== undefined) {
-            showModal({ title: 'Error', message: 'File already exists.', confirmText: 'OK', cancelText: null });
-          } else {
-            createFile(sanitized, '');
-          }
-        }
-      });
-
-      document.getElementById('new-folder-btn').addEventListener('click', async () => {
-        const result = await showModal({
-          title: 'New Folder',
-          message: 'Enter folder path (e.g., /src)',
-          input: true,
-          inputPlaceholder: '/path/to/folder',
-          confirmText: 'Create',
-          cancelText: 'Cancel'
-        });
-        if (result) {
-          const rawPath = result.trim();
-          if (!rawPath) return;
-          const path = rawPath.startsWith('/') ? rawPath : '/' + rawPath;
-          const sanitized = sanitizeFilename(path);
-          if (folderStructure[sanitized]) {
-            showModal({ title: 'Error', message: 'Folder already exists.', confirmText: 'OK', cancelText: null });
-          } else {
-            createFolder(sanitized);
-          }
-        }
-      });
-
-      // Output tabs
-      document.querySelectorAll('.tabs span').forEach(tab => {
+      // Tab switching
+      document.querySelectorAll('#tabs-bar .tab').forEach(tab => {
         tab.addEventListener('click', () => {
           const tabName = tab.dataset.tab;
-          if (tabName === 'output') showOutputTab();
-          else if (tabName === 'terminal') showTerminalTab();
-          else if (tabName === 'preview') showPreviewTab();
+          showTab(tabName);
         });
       });
 
-      document.getElementById('clear-output').addEventListener('click', clearOutput);
-
-      // Chat
-      chatSend.addEventListener('click', () => {
-        sendChatMessage(chatInput.value);
+      // Buttons
+      document.getElementById('newFileBtn').addEventListener('click', () => {
+        const name = prompt('File path (e.g., /src/app.js):');
+        if (name && name.trim()) {
+          const path = name.trim().startsWith('/') ? name.trim() : '/' + name.trim();
+          if (filesystem[path]) {
+            alert('File exists.');
+          } else {
+            createFile(path, '');
+          }
+        }
       });
+      document.getElementById('newFolderBtn').addEventListener('click', () => {
+        const name = prompt('Folder path (e.g., /src):');
+        if (name && name.trim()) {
+          const path = name.trim().startsWith('/') ? name.trim() : '/' + name.trim();
+          if (folderStructure[path]) {
+            alert('Folder exists.');
+          } else {
+            createFolder(path);
+          }
+        }
+      });
+
+      // Run/Explain from toolbar (we'll add buttons in top bar)
+      const toolbar = document.querySelector('#tabs-bar');
+      const runBtn = document.createElement('span');
+      runBtn.textContent = '▶ Run';
+      runBtn.style.cssText = 'background:rgba(122,162,247,0.2); color:#7aa2f7; padding:2px 12px; border-radius:12px; cursor:pointer; font-size:12px; margin-left:8px;';
+      runBtn.addEventListener('click', runCode);
+      toolbar.appendChild(runBtn);
+
+      const explainBtn = document.createElement('span');
+      explainBtn.textContent = '💬 Explain';
+      explainBtn.style.cssText = 'background:rgba(122,224,176,0.15); color:#7ae0b0; padding:2px 12px; border-radius:12px; cursor:pointer; font-size:12px; margin-left:4px;';
+      explainBtn.addEventListener('click', explainCode);
+      toolbar.appendChild(explainBtn);
+
+      // Chat send
+      chatSend.addEventListener('click', () => sendChatMessage(chatInput.value));
       chatInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
@@ -1442,17 +1279,20 @@ finally:
       });
       chatInput.addEventListener('input', () => {
         chatInput.style.height = 'auto';
-        chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
       });
 
       // Load previous chat
       conversation.forEach(msg => {
-        addMessage(msg.role, msg.content);
+        addChatMessage(msg.role, msg.content);
       });
 
       // Init Pyodide and Terminal
       initPyodide();
       initTerminal();
+
+      // Default tab: editor
+      showTab('editor');
 
       window.addEventListener('resize', () => {
         if (editor) editor.refresh();
